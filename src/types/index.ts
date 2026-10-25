@@ -35,7 +35,7 @@ export interface DocRecord {
   fileName: string; size: number; mime: string; fingerprint: string
   pages?: number; width?: number; height?: number
   uploadedAt: string; source: 'SEED_SAMPLE' | 'BROWSER_UPLOAD' | 'DEMO_SAMPLE'
-  version: number; history: DocVersion[]
+  version: number; history: DocVersion[]; analysis?: import('../lib/deepAnalyze').DeepAnalysis
   status: CheckStatus; expiresOn?: string; needsRerun?: boolean
 }
 

@@ -24,7 +24,7 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 | --- | --- | --- |
 | Identify application category → applicable checklist | ✅ | New Institution / Extension of Approval / Increase in Intake, each with its own checklist, handbook clauses and accepted formats; admin can toggle mandatory/optional or add items. |
 | Retrieve records from authorised AICTE systems | 🟡 | Simulated. New **AICTE records** tab cross-checks previous EoA, approved intake, TER payment, deficiency status, affidavits and NOCs against the application (fictional, deterministic records). |
-| OCR + classification + extraction | 🟡 | Sample extraction with page, confidence, and a **Gate 2** (values <80% need human confirmation). Labelled "SAMPLE EXTRACTION — no real OCR". Document classification is implied by checklist slot, not inferred. |
+| OCR + classification + extraction | ✅ / 🟡 | **Real in-browser OCR** (Tesseract.js, self-hosted so it runs on Vercel) and PDF text-layer extraction (pdf.js) for uploaded files: expiry, certificate no., institution, area, faculty count with confidence; Gate 2 for <80%. Seeded sample documents use sample extraction. Classification is implied by checklist slot. |
 | Missing fields / incomplete / expired / inconsistent | ✅ | See Objective 1. |
 | Structured validation report | ✅ | "Export validation report" (officer and institution) downloads a standalone HTML report: documents, findings with evidence, records cross-check, infrastructure, audit trail. |
 | Rectification where permitted | ✅ | Officer-approved notice → institution replaces documents → resubmit → re-check only changed documents → version comparison. |
@@ -32,7 +32,7 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 ### 2.2 Anomaly and potential-forgery detection
 | Requirement | Status | Notes |
 | --- | --- | --- |
-| Indicators: alterations, duplicates, metadata, identifiers, dates | 🟡 | Mix of real (fingerprint, arithmetic, expiry, repeated identifiers) and labelled simulations (hidden text, structure, photo hash). |
+| Indicators: alterations, duplicates, metadata, identifiers, dates | ✅ / 🟡 | **Real on uploaded PDFs/images:** metadata (producer, created vs modified), hidden/off-page text, incremental updates, scripts, blur score, expiry. Real on stored data: SHA-256 duplicates, invoice arithmetic, repeated identifiers. Perceptual-hash photo duplicates stay seeded. |
 | Each flag has evidence and reason | ✅ | Evidence bullets + rule + page on every finding. |
 | Preliminary indicators, not proof of forgery | ✅ | Neutral wording ("unusual structure", "potential duplicate"); duplicates stay *candidates* until an officer decides. |
 

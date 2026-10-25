@@ -6,6 +6,7 @@ import type {
 import { buildSeed, STATE_VERSION } from '../data/seed'
 import { makeEntry, verifyChain } from './audit'
 import { buildExtractions, buildFinding, pickDoc, scenarioFor, TEMPLATES } from './findingTemplates'
+import { realFlags, type DeepAnalysis } from './deepAnalyze'
 import { sha256 } from './hash'
 import { APP_TYPE_LABEL, daysUntil } from './format'
 
@@ -117,6 +118,15 @@ export const actions = {
     audit(s, 'DOCUMENT_UPLOADED', appId, `${req.name}: ${m.fileName} (${m.source === 'BROWSER_UPLOAD' ? 'browser-local file' : 'labelled demo sample'})`)
     commit(s); return ok(id)
   },
+  setAnalysis(docId: string, an: DeepAnalysis): Result {
+    const s = clone(); const d = s.docs.find((x) => x.id === docId)
+    if (!d) return fail('Document not found')
+    d.analysis = an
+    if (an.expiresOn) d.expiresOn = an.expiresOn
+    if (an.pdf?.pages) d.pages = an.pdf.pages
+    audit(s, 'DOCUMENT_ANALYZED', d.appId, `${d.name}: ${an.error ? 'analysis failed' : `${an.fields.length} field(s) extracted`}`)
+    commit(s); return ok()
+  },
   removeDoc(docId: string): Result {
     const s = clone(); const d = s.docs.find((x) => x.id === docId)
     if (!d) return fail('Document not found')
@@ -135,6 +145,7 @@ export const actions = {
     d.version += 1
     Object.assign(d, { fileName: m.fileName, size: m.size, mime: m.mime, fingerprint: m.fingerprint, pages: m.pages, width: m.width, height: m.height, uploadedAt: now(), source: m.source })
     d.history.push({ version: d.version, fileName: m.fileName, size: m.size, fingerprint: m.fingerprint, uploadedAt: now(), pages: m.pages, note })
+    d.analysis = undefined
     if (a.status !== 'DRAFT') { d.needsRerun = true; d.status = 'PENDING' }
     audit(s, 'DOCUMENT_REPLACED', a.id, `${d.name} → v${d.version} (${m.fileName})`)
     timeline(a, `Document replaced: ${d.name} (v${d.version})`, 'Institution')
@@ -186,19 +197,24 @@ export const actions = {
     if (rerun.length) {
       for (const d of rerun) {
         d.needsRerun = false; d.status = 'VERIFIED'
-        if (d.reqKey === 'FIRE') d.expiresOn = new Date(Date.now() + 365 * 86400000).toISOString()
+        if (d.reqKey === 'FIRE' && !d.analysis?.expiresOn) d.expiresOn = new Date(Date.now() + 365 * 86400000).toISOString()
         s.findings.filter((f) => f.docId === d.id && (f.status === 'ACCEPTED' || f.status === 'NEEDS_EVIDENCE' || f.status === 'OPEN')).forEach((f) => {
           f.status = 'RESOLVED'; f.decision = { by: 'PRAMAAN re-check', at: now(), action: 'RESOLVED', reason: `Replacement v${d.version} re-checked; no issue indicated. Officer review still required.` }
         })
       }
-      audit(s, 'FINDINGS_RECHECKED', appId, `${rerun.length} replaced document(s) re-checked `)
+      created += addRealFindings(s, appId, rerun)
+      audit(s, 'FINDINGS_RECHECKED', appId, `${rerun.length} replaced document(s) re-checked`)
     } else {
-      const scenario = scenarioFor(appId)
+      const analysed = docs.filter((d) => d.analysis && !d.analysis.error)
+      const scenario = scenarioFor(appId).filter((t) =>
+        !(t === 'T7' && analysed.some((d) => d.analysis!.pdf)) && !(t === 'T9' && analysed.some((d) => d.analysis!.blur !== undefined)) &&
+        !(t === 'T1' && analysed.some((d) => d.analysis!.expiresOn)))
       const lowConf = scenario.includes('T2')
-      if (scenario.includes('T1')) { const fd = docs.find((d) => d.reqKey === 'FIRE'); if (fd) fd.expiresOn = new Date(Date.now() - 35 * 86400000).toISOString() }
-      else docs.filter((d) => d.reqKey === 'FIRE').forEach((d) => { d.expiresOn = new Date(Date.now() + 200 * 86400000).toISOString() })
-      const ex = buildExtractions(`X${s.seq}`, appId, docs, lowConf)
+      if (scenario.includes('T1')) { const fd = docs.find((d) => d.reqKey === 'FIRE' && !d.analysis?.expiresOn); if (fd) fd.expiresOn = new Date(Date.now() - 35 * 86400000).toISOString() }
+      else docs.filter((d) => d.reqKey === 'FIRE' && !d.analysis?.expiresOn).forEach((d) => { d.expiresOn = new Date(Date.now() + 200 * 86400000).toISOString() })
+      const ex = buildExtractions(`X${s.seq}`, appId, docs.filter((d) => !analysed.includes(d)), lowConf)
       s.seq += ex.length
+      analysed.forEach((d) => d.analysis!.fields.forEach((f) => ex.push({ id: nextId(s, 'X'), appId, docId: d.id, field: f.field, value: f.value, page: f.page, confidence: f.confidence, confirmed: f.confidence >= 0.8 })))
       s.extracted = s.extracted.filter((e) => e.appId !== appId).concat(ex)
       scenario.forEach((tid, i) => {
         const t = TEMPLATES[tid]; const doc = pickDoc(t, docs, i)
@@ -206,6 +222,7 @@ export const actions = {
         s.findings.push(buildFinding(nextId(s, 'F'), appId, t, doc, now(), lc?.id)); created++
         doc.status = t.verdict
       })
+      created += addRealFindings(s, appId, docs)
       docs.forEach((d) => { if (d.status === 'PENDING') d.status = 'VERIFIED' })
     }
     a.status = 'AWAITING_HUMAN_REVIEW'; a.verifiedOnce = true; a.lastRunAt = now()
@@ -405,3 +422,17 @@ export function unresolvedHigh(s: DemoState, appId: string) {
 }
 export const openFindingCount = (s: DemoState, appId: string) => s.findings.filter((f) => f.appId === appId && (f.status === 'OPEN' || f.status === 'ESCALATED' || f.status === 'NEEDS_EVIDENCE')).length
 export type { Notice, Notification, Ruleset }
+
+function addRealFindings(s: DemoState, appId: string, docs: DocRecord[]): number {
+  let n = 0
+  for (const r of realFlags(docs)) {
+    const doc = docs.find((d) => d.id === r.docId)!
+    s.findings.push({
+      id: nextId(s, 'F'), appId, docId: r.docId, checkId: r.checkId, title: r.title, severity: r.severity, status: 'OPEN', verdict: r.verdict,
+      description: r.description, page: r.page, rule: r.rule, confidence: r.confidence, source: 'In-browser analysis (pdf.js / Tesseract.js)',
+      simulated: false, strength: null, action: r.action, evidence: r.evidence, createdAt: now(),
+    })
+    doc.status = r.verdict; n++
+  }
+  return n
+}

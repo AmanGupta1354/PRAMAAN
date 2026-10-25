@@ -1,6 +1,7 @@
 import type { DemoState, Finding, Strength } from '../types'
 import { fmtSize, short } from './format'
 import { scenarioFor, TEMPLATES } from './findingTemplates'
+import { realFlags } from './deepAnalyze'
 
 export type ItemStatus = 'ok' | 'warn' | 'bad' | 'info' | 'na'
 export interface PlanItem {
@@ -36,11 +37,16 @@ export function buildPlan(s: DemoState, appId: string): Plan {
   const fromExisting = existing.length > 0 || !!app.verifiedOnce
   const rerun = docs.some((d) => d.needsRerun)
   const flagsSrc: Pick<Finding, 'rule' | 'checkId' | 'title' | 'verdict' | 'severity'>[] =
-    rerun ? [] : fromExisting ? existing : scenarioFor(appId).map((t) => TEMPLATES[t])
-  const flags = flagsSrc.map((f) => ({ rule: f.rule, checkId: f.checkId, title: f.title, verdict: f.verdict, severity: f.severity }))
+    rerun ? [] : fromExisting ? existing : scenarioFor(appId).filter((t) => !(t === 'T7' && docs.some((d) => d.analysis?.pdf)) && !(t === 'T9' && docs.some((d) => d.analysis?.blur !== undefined)) && !(t === 'T1' && docs.some((d) => d.analysis?.expiresOn))).map((t) => TEMPLATES[t])
+  const realF = fromExisting && !rerun ? [] : realFlags(rerun ? docs.filter((d) => d.needsRerun) : docs)
+  const flags = [...flagsSrc, ...realF].map((f) => ({ rule: f.rule, checkId: f.checkId, title: f.title, verdict: f.verdict, severity: f.severity }))
   const has = (rule: string) => flags.find((f) => f.rule.startsWith(rule))
   const hasCheck = (c: string) => flags.find((f) => f.checkId === c)
   const targetDocs = rerun ? docs.filter((d) => d.needsRerun) : docs
+  const analysed = targetDocs.filter((d) => d.analysis && !d.analysis.error)
+  const withBlur = analysed.find((d) => d.analysis!.blur !== undefined)
+  const withPdf = analysed.find((d) => d.analysis!.pdf)
+  const REAL = 'COMPUTED IN BROWSER'
 
   const ingest: PlanItem[] = targetDocs.map((d) => ({
     id: `in-${d.id}`, title: d.fileName,
@@ -52,7 +58,9 @@ export function buildPlan(s: DemoState, appId: string): Plan {
   const lowRes = docs.find((d) => d.width && Math.min(d.width, d.height ?? 0) < 800)
   const quality: PlanItem[] = [
     { id: 'q1', title: 'Scan quality', detail: 'Overall scan quality score 86/100', status: 'ok', tag: SIM, right: '86' },
-    hasCheck('CHK-QUALITY')
+    withBlur
+      ? { id: 'q2', title: 'Blur indicator', detail: `${withBlur.fileName}: sharpness score ${withBlur.analysis!.blur} (Laplacian variance; below 60 is soft)`, status: withBlur.analysis!.blur! < 60 ? 'warn' : 'ok', tag: REAL, right: String(withBlur.analysis!.blur) }
+      : hasCheck('CHK-QUALITY')
       ? { id: 'q2', title: 'Blur indicator', detail: 'Page 3 appears blurred (score 41/100). Rescan recommended.', status: 'warn', tag: SIM, right: '41' }
       : { id: 'q2', title: 'Blur indicator', detail: 'No blurred pages indicated (min score 82/100)', status: 'ok', tag: SIM, right: '82' },
     { id: 'q3', title: 'Page completeness', detail: `${targetDocs.reduce((n, d) => n + (d.pages ?? 1), 0)} page(s) counted; no blank pages indicated`, status: 'ok', tag: SIM },
@@ -68,10 +76,11 @@ export function buildPlan(s: DemoState, appId: string): Plan {
     ['Issue date', '12 Mar 2025', 1, 0.95], ['Expiry date', has('R-FIRE-01') ? 'Past date (expired)' : 'Future date', 1, 0.96],
     ['Faculty count', '48', 2, has('R-FAC-01') ? 0.62 : 0.94], ['Declared built-up area', '4,200 sq m', 2, 0.9],
   ]
-  const exRows = ex.length && !rerun ? ex.map((e) => [e.field, e.value, e.page, e.confidence] as const) : sampleEx
-  const extract: PlanItem[] = exRows.map(([f, v, p, c], i) => ({
+  const realRows = analysed.flatMap((d) => d.analysis!.fields.map((f) => [f.field, f.value, f.page, f.confidence, f.via] as const))
+  const exRows: readonly (readonly [string, string, number, number, string?])[] = realRows.length ? realRows : ex.length && !rerun ? ex.map((e) => [e.field, e.value, e.page, e.confidence] as const) : sampleEx
+  const extract: PlanItem[] = exRows.map(([f, v, p, c, via], i) => ({
     id: `x${i}`, title: f, detail: `${v} · page ${p}`, status: c < 0.8 ? 'warn' : 'ok', right: `${Math.round(c * 100)}%`,
-    tag: 'SAMPLE EXTRACTION — no real OCR', confirm: c < 0.8,
+    tag: via ? (via === 'OCR' ? 'OCR (Tesseract.js) · COMPUTED IN BROWSER' : 'PDF TEXT LAYER · COMPUTED IN BROWSER') : 'SAMPLE EXTRACTION', confirm: c < 0.8,
   }))
 
   const rule = (id: string, clause: string, input: string, expected: string, observedOk: string, observedBad: string, held = false): PlanItem => {
@@ -93,11 +102,14 @@ export function buildPlan(s: DemoState, appId: string): Plan {
 
   const dupHit = s.docs.find((d) => d.appId !== appId && targetDocs.some((t) => t.fingerprint === d.fingerprint))
   const forensics: PlanItem[] = [
-    { id: 'f1', title: 'PDF metadata inspection', detail: 'Producer/creation-date fields read as sample values; no inconsistency indicated', status: 'ok', tag: FOR },
-    hasCheck('CHK-FOR-HIDDEN')
+    withPdf ? { id: 'f1', title: 'PDF metadata inspection', detail: `Producer: ${withPdf.analysis!.pdf!.producer ?? 'not recorded'} · Creator: ${withPdf.analysis!.pdf!.creator ?? 'not recorded'} · Created: ${withPdf.analysis!.pdf!.created?.slice(0, 10) ?? '—'} · Modified: ${withPdf.analysis!.pdf!.modified?.slice(0, 10) ?? '—'}`, status: hasCheck('CHK-FOR-META') ? 'warn' : 'ok', tag: REAL }
+      : { id: 'f1', title: 'PDF metadata inspection', detail: 'Producer/creation-date fields read as sample values; no inconsistency indicated', status: 'ok', tag: FOR },
+    withPdf ? { id: 'f2', title: 'Hidden-text indicator', detail: withPdf.analysis!.pdf!.hiddenItems ? `${withPdf.analysis!.pdf!.hiddenItems} tiny or off-page text run(s) found. Review required — not proof of tampering.` : `Scanned ${withPdf.analysis!.pdf!.textChars} characters of text layer; none hidden or off-page`, status: withPdf.analysis!.pdf!.hiddenItems ? 'warn' : 'ok', tag: REAL }
+      : hasCheck('CHK-FOR-HIDDEN')
       ? { id: 'f2', title: 'Hidden-text indicator', detail: 'Unusual structure: text layer beneath an image region on page 2. Review required — not proof of tampering.', status: 'warn', tag: FOR }
       : { id: 'f2', title: 'Hidden-text indicator', detail: 'No hidden text layer indicated', status: 'ok', tag: FOR },
-    { id: 'f3', title: 'Structural-change indicator', detail: 'No incremental-update anomalies indicated', status: 'ok', tag: FOR },
+    withPdf ? { id: 'f3', title: 'Structural-change indicator', detail: `${withPdf.analysis!.pdf!.eofCount} end-of-file marker(s)${withPdf.analysis!.pdf!.eofCount > 1 ? ' — saved with incremental updates' : ''}${withPdf.analysis!.pdf!.encrypted ? ' · encrypted' : ''}${withPdf.analysis!.pdf!.hasScript ? ' · contains script' : ''}`, status: withPdf.analysis!.pdf!.eofCount > 1 || withPdf.analysis!.pdf!.hasScript ? 'warn' : 'ok', tag: REAL }
+      : { id: 'f3', title: 'Structural-change indicator', detail: 'No incremental-update anomalies indicated', status: 'ok', tag: FOR },
     hasCheck('CHK-DUP-PHOTO')
       ? { id: 'f4', title: 'Duplicate-photo comparison', detail: 'Potential duplicate: 91% perceptual-hash similarity with a photo in another application.', status: 'warn', tag: FOR }
       : { id: 'f4', title: 'Duplicate-photo comparison', detail: 'No similar photograph found in the seeded store', status: 'ok', tag: FOR },

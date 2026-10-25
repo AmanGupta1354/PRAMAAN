@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { CheckCircle2, FileUp, Trash2, UploadCloud, Replace, FlaskConical } from 'lucide-react'
 import type { Application, DocRecord } from '../types'
 import { actions, useStore } from '../lib/store'
+import { deepAnalyze } from '../lib/deepAnalyze'
 import { analyzeFile, demoSample, setPreview, validateFile } from '../lib/fileInfo'
 import { fmtSize } from '../lib/format'
 import { Badge, Button, Callout, CheckBadge, cn, Progress, SimTag, useToast } from './ui'
@@ -17,6 +18,7 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
   const [category, setCategory] = useState(reqs[0]?.key ?? '')
   const [drag, setDrag] = useState(false)
   const [busy, setBusy] = useState<{ key: string; name: string; pct: number } | null>(null)
+  const [analyzing, setAnalyzing] = useState<Record<string, string>>({})
   const [warn, setWarn] = useState<Record<string, string[]>>({})
   const [preview, setPrev] = useState<DocRecord | null>(null)
   const pickRef = useRef<HTMLInputElement>(null)
@@ -36,12 +38,20 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
       if (!r.ok) { toast('bad', r.error); return }
       setPreview(r.data, previewUrl)
       setWarn((w) => ({ ...w, [key]: warnings }))
+      void runAnalysis(r.data, file)
       toast('ok', `${file.name} added.`)
     } catch (e) {
       toast('bad', e instanceof Error ? e.message : 'Could not read the file.')
     } finally {
       setTimeout(() => setBusy(null), 450)
     }
+  }
+  const runAnalysis = async (docId: string, file: File) => {
+    setAnalyzing((a) => ({ ...a, [docId]: 'Analysing…' }))
+    const res = await deepAnalyze(file, (st) => setAnalyzing((a) => ({ ...a, [docId]: st })))
+    actions.setAnalysis(docId, res)
+    setAnalyzing((a) => { const n = { ...a }; delete n[docId]; return n })
+    toast(res.error ? 'bad' : 'ok', res.error ? `Analysis failed: ${res.error}` : `${file.name}: ${res.fields.length} field(s) extracted${res.pdf ? `, ${res.pdf.pages} page(s) inspected` : ''}.`)
   }
   const sample = (key: string) => {
     const existing = docs.find((d) => d.reqKey === key)
@@ -94,6 +104,11 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
                       <CheckBadge s={d.status} />
                     </div>
                   ) : <div className="mt-0.5 text-xs text-muted">Not uploaded</div>}
+                  {d && analyzing[d.id] && <div className="mt-1 text-xs text-brand">⏳ {analyzing[d.id]}</div>}
+                  {d?.analysis && !d.analysis.error && (
+                    <div className="mt-1 text-xs text-muted">Analysed in browser · {d.analysis.pdf ? `${d.analysis.pdf.pages}p · ${d.analysis.pdf.textChars} chars text · producer ${d.analysis.pdf.producer ?? 'n/a'}` : 'image'}{d.analysis.ocr?.used ? ` · OCR ${Math.round((d.analysis.ocr.confidence ?? 0) * 100)}%` : ''}{d.analysis.blur !== undefined ? ` · sharpness ${d.analysis.blur}` : ''} · {d.analysis.fields.length} field(s)</div>
+                  )}
+                  {d?.analysis?.error && <div className="mt-1 text-xs text-warn">Analysis unavailable: {d.analysis.error}</div>}
                   {warn[r.key]?.map((w) => <div key={w} className="mt-1 text-xs text-warn">⚠ {w}</div>)}
                 </div>
                 {editable && (

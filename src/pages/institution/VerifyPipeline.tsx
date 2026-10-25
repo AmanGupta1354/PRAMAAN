@@ -213,7 +213,7 @@ function ItemRow({ it }: { it: PlanItem }) {
       className={cn('flex items-start gap-3 rounded-xl border bg-bg/40 p-3', it.status === 'warn' ? 'border-warn/40' : it.status === 'bad' ? 'border-bad/50' : 'border-line')}>
       <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 18 }} className={cn('mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full', TONE[it.status])}><I className="h-3.5 w-3.5" /></motion.span>
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">{it.title}{it.tag && <SimTag>{it.tag}</SimTag>}{it.strength && <StrengthBadge s={it.strength} simulated />}{it.confirm && <Badge tone="amber">Needs human confirmation (Gate 2)</Badge>}</div>
+        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">{it.title}{it.tag && (it.tag.includes('COMPUTED') ? <Badge tone="green">{it.tag}</Badge> : <SimTag>{it.tag}</SimTag>)}{it.strength && <StrengthBadge s={it.strength} simulated />}{it.confirm && <Badge tone="amber">Needs human confirmation (Gate 2)</Badge>}</div>
         <p className="mt-0.5 break-words text-xs text-muted">{it.detail}</p>
       </div>
       {it.right && <div className={cn('text-sm font-bold tabular-nums', it.status === 'warn' && 'text-warn')}>{it.right}</div>}

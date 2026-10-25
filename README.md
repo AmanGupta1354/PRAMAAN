@@ -40,8 +40,10 @@ AI suggests. The authorized officer decides. Nothing is ever approved or rejecte
 
 | Real (computed in your browser) | Simulated |
 | --- | --- |
-| File type / size validation, SHA-256 fingerprints, PDF page-count heuristic, image dimensions | OCR and field extraction (sample values, no Tesseract) |
-| Invoice arithmetic, repeated invoice numbers, fingerprint comparison across stored documents | Quality/blur scores, forensic indicators, perceptual-hash duplicates |
+| File type / size validation, SHA-256 fingerprints, image dimensions | Extraction for the seeded sample documents ("Sample" button) |
+| **Real OCR** (Tesseract.js, self-hosted) and **PDF text-layer extraction** (pdf.js) of uploaded files: expiry date, certificate number, institution, area, faculty count | |
+| **Real PDF forensics**: producer/creator/created/modified metadata, hidden or off-page text, incremental-update (`%%EOF`) count, script/encryption flags, blur score | Perceptual-hash photo duplicates |
+| Invoice arithmetic, repeated invoice numbers, fingerprint comparison across stored documents | Source lookups, cross-college candidates over seeded data |
 | Workflow state transitions, gates, audit hash chain, proof-record integrity digest | DigiLocker, CCA India, AICTE/NAAC/NBA, state registries (no network calls at all) |
 | Expiry-date window impact preview for rulesets | Authentication, roles, messaging, "AICTE records" |
 
