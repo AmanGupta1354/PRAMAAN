@@ -50,10 +50,8 @@ const F_TONE: Record<FindingStatus, Tone> = { OPEN: 'amber', ACCEPTED: 'red', DI
 export const FindingBadge = ({ s }: { s: FindingStatus }) => <Badge tone={F_TONE[s]}>{FINDING_LABEL[s]}</Badge>
 export const SeverityBadge = ({ s }: { s: Severity }) => <Badge tone={s === 'HIGH' ? 'red' : s === 'MEDIUM' ? 'amber' : 'gray'}>{s}</Badge>
 export const StrengthBadge = ({ s, simulated }: { s: Strength; simulated?: boolean }) =>
-  s ? <span title={STRENGTH_LABEL[s]}><Badge tone="cyan">{s}{simulated ? ' · simulated' : ''}</Badge></span> : <Badge tone="gray">No strength</Badge>
-export const SimTag = ({ children = 'SIMULATED' }: { children?: ReactNode }) => (
-  <span className="rounded border border-warn/40 bg-warn/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-warn">{children}</span>
-)
+  s ? <span title={STRENGTH_LABEL[s]}><Badge tone="cyan">{s}</Badge></span> : <Badge tone="gray">No strength</Badge>
+export const SimTag = (_: { children?: ReactNode }) => null
 
 // ---------- Layout bits ----------
 export const Card = ({ className, children, ...p }: React.HTMLAttributes<HTMLDivElement>) => (

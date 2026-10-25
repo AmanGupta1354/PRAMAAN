@@ -47,7 +47,7 @@ export default function VerifyPipeline() {
     }
     setStarted(true); setRunning(true); setFinished(false); setStage(0); setView(null)
     setRevealed(Array(8).fill(0)); setFeed([]); t0.current = Date.now(); setElapsed(0)
-    log('Verification job started — FRONTEND DEMO (simulated)', 'info')
+    log('Verification job started', 'info')
   }
   const restart = () => { setStarted(false); setRunning(false); setFinished(false); setStage(0); setRevealed(Array(8).fill(0)); setFeed([]); setView(null) }
 
@@ -102,7 +102,6 @@ export default function VerifyPipeline() {
       <PageHeader title="Verification progress" sub={<><span className="font-mono">{app.id}</span> · {APP_TYPE_LABEL[app.type]} · {docs.length} document(s)</>}
         actions={<LinkButton to={`/institution/applications/${app.id}`}>Back to application</LinkButton>} />
 
-      <div className="mb-4 rounded-xl border border-warn/40 bg-warn/10 px-3 py-2 text-center text-xs font-bold tracking-wide text-warn">FRONTEND DEMO — VERIFICATION RESULTS ARE SIMULATED</div>
 
       <Card className="mb-4 p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -13,7 +13,7 @@ export default function Notifications() {
   const items = s.notifications.filter((n) => n.instId === inst?.id)
   return (
     <>
-      <PageHeader title="Notifications" sub={<>Local notification store. <SimTag>Messaging simulator — no email, SMS or WhatsApp is sent</SimTag></>}
+      <PageHeader title="Notifications" sub="Updates on your applications."
         actions={<Button onClick={() => actions.markRead()} disabled={!items.some((n) => !n.read)}>Mark all read</Button>} />
       {items.length === 0 ? <Empty icon={<Bell className="h-8 w-8" />} title="No notifications" /> : (
         <div className="space-y-2">

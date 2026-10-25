@@ -7,7 +7,6 @@ export function VersionCompare({ docs }: { docs: DocRecord[] }) {
   if (!changed.length) return <Empty title="No replaced documents yet" body="When a document is replaced during rectification, a metadata comparison between versions appears here." />
   return (
     <div className="space-y-4">
-      <Callout tone="amber" title="Simulated comparison">Field-level content differences are simulated. File name, size, page count, fingerprint and expiry are taken from the stored version records in this browser.</Callout>
       {changed.map((d) => {
         const a = d.history[d.history.length - 2], b = d.history[d.history.length - 1]
         const rows: [string, string, string][] = [

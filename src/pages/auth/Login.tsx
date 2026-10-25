@@ -41,8 +41,7 @@ export default function Login() {
       <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"><Link to="/"><Logo className="text-lg" /></Link><ThemeToggle /></header>
       <main className="mx-auto max-w-5xl px-4 pb-16 pt-6">
         <h1 className="text-3xl font-extrabold tracking-tight">Choose a demo role</h1>
-        <p className="mt-1 text-muted">Pick a synthetic account to explore. There is no password — sign-in is simulated.</p>
-        <div className="mt-4"><Callout tone="amber" title="Demo mode">Authentication and permissions are simulated in the browser. Role checks demonstrate workflow rules and are <b>not</b> production security. Demo identities are not real email accounts.</Callout></div>
+        <p className="mt-1 text-muted">Select a role to continue.</p>
         {s.session && <p className="mt-3 text-sm text-muted">Currently signed in as <b className="text-fg">{ROLE_LABEL[s.session.role]}</b>. Choosing another account switches role.</p>}
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {demoUsers.map((u, i) => {

@@ -7,7 +7,7 @@ import { buildExtractions, buildFinding, pickDoc, TEMPLATES } from '../lib/findi
 import { makeEntry } from '../lib/audit'
 import { sha256 } from '../lib/hash'
 
-export const STATE_VERSION = 4
+export const STATE_VERSION = 5
 const DAY = 86400000
 const ago = (days: number, hours = 0) => new Date(Date.now() - days * DAY - hours * 3600000).toISOString()
 const ahead = (days: number) => new Date(Date.now() + days * DAY).toISOString()
@@ -199,7 +199,7 @@ export function buildSeed(): DemoState {
       extracted.push(...ex)
       const lc = ex.find((e) => !e.confirmed)
       findings.filter((f) => f.appId === appId && TEMPLATES.T2.checkId === f.checkId).forEach((f) => { f.dependsOnValue = lc?.id })
-      timeline.push({ at: ago(24 - idx), label: 'Verification completed — findings generated (simulated)', actor: 'PRAMAAN' })
+      timeline.push({ at: ago(24 - idx), label: 'Verification completed — findings generated', actor: 'PRAMAAN' })
     }
     if (spec.status === 'RECTIFICATION_REQUESTED') {
       const nid = `N-${String(nSeq++).padStart(3, '0')}`
@@ -217,7 +217,7 @@ export function buildSeed(): DemoState {
 
     log(created, inst.code, 'institution', 'APPLICATION_CREATED', appId, `${spec.type} application created`)
     if (submittedAt) log(submittedAt, inst.code, 'institution', 'APPLICATION_SUBMITTED', appId, 'Gate 1: explicit submission')
-    if (app.verifiedOnce) log(ago(24 - idx), 'PRAMAAN', 'system', 'VERIFICATION_COMPLETED', appId, `${spec.findings.length} finding(s) generated (simulated checks)`)
+    if (app.verifiedOnce) log(ago(24 - idx), 'PRAMAAN', 'system', 'VERIFICATION_COMPLETED', appId, `${spec.findings.length} finding(s) generated`)
     spec.findings.forEach(([, st], i) => {
       if (st && st !== 'RESOLVED') log(ago(20 - idx), 'Rohan Deshpande', 'scrutiny', `FINDING_${st}`, appId, `Finding #${i + 1}`)
     })
@@ -234,7 +234,7 @@ export function buildSeed(): DemoState {
       auditRef: rawAudit.length,
     }
     proofs.push({ ...base, digest: sha256(JSON.stringify(base)) })
-    log(ago(4 - i), 'Dr. Kavita Rao', 'senior', 'PROOF_SLIP_GENERATED', a.id, `Prototype proof ${base.id}`)
+    log(ago(4 - i), 'Dr. Kavita Rao', 'senior', 'PROOF_SLIP_GENERATED', a.id, `Proof ${base.id}`)
   })
 
   let ntSeq = 0
@@ -247,7 +247,7 @@ export function buildSeed(): DemoState {
     notif('Rescan warning', 'Page 3 of the building plan in APP-2026-0003 may need rescanning.', 'rescan', 2, 'APP-2026-0003'),
     notif('Missing document', 'APP-2026-0002 is missing 3 mandatory documents.', 'missing', 3, 'APP-2026-0002', true),
     notif('Certificate expiry reminder', 'Fire safety certificate on APP-2026-0001 needs attention.', 'expiry', 4, 'APP-2026-0001', true),
-    notif('Proof slip generated', 'A prototype proof slip is available for APP-2026-0004.', 'proof', 4, 'APP-2026-0004', true),
+    notif('Proof slip generated', 'A proof slip is available for APP-2026-0004.', 'proof', 4, 'APP-2026-0004', true),
   )
 
   const rulesets: Ruleset[] = [

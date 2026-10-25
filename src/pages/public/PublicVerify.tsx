@@ -27,7 +27,7 @@ export default function PublicVerify() {
         {s.proofs.length > 0 && !proofId && <p className="text-xs text-muted">Try a sample in this browser: {s.proofs.slice(0, 3).map((p) => <Link key={p.id} to={`/verify/${p.id}`} className="mr-2 font-mono text-brand">{p.id}</Link>)}</p>}
 
         {proofId && !proof && (
-          <Callout tone="red" title="No record found in this browser"><ShieldAlert className="mb-1 inline h-4 w-4" /> “{clean(proofId)}” does not exist in this browser’s demo store. This does not prove the slip is invalid: records are browser-local and cannot be verified from another person’s browser.</Callout>
+          <Callout tone="red" title="No record found"><ShieldAlert className="mb-1 inline h-4 w-4" /> “{clean(proofId)}” could not be found.</Callout>
         )}
         {proof && (
           <>
@@ -41,10 +41,9 @@ export default function PublicVerify() {
         <div className="rounded-2xl border border-line bg-surface p-4 text-sm">
           <h2 className="mb-1 font-semibold">What this proves — and what it does not</h2>
           <ul className="list-disc space-y-1 pl-5 text-muted">
-            <li>It shows the checks and statuses recorded for a synthetic application in this demo.</li>
+            <li>It shows the checks and statuses recorded for an application.</li>
             <li>It is <b className="text-fg">not</b> an official AICTE approval, certificate or decision.</li>
             <li>The digest is a SHA-256 hash of the record, not a cryptographic signature from any authority.</li>
-            <li>Verification strengths and source responses shown here are simulated.</li>
           </ul>
         </div>
       </main>

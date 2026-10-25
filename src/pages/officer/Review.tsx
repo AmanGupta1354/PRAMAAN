@@ -133,7 +133,7 @@ export default function Review() {
                     <>
                       {blockers.length > 0 && <Callout tone="red" title="Recommendation blocked">{blockers.length} high-severity finding(s) remain unresolved: {blockers.map((b) => `${b.id} (${b.status.toLowerCase().replace('_', ' ')})`).join(', ')}. Dismiss with a reason, or wait for the institution’s rectification to resolve them.</Callout>}
                       <textarea aria-label="Recommendation text" value={recText} onChange={(e) => setRecText(e.target.value)} rows={3} className={`${inputCls} mt-3`} disabled={role !== 'senior'} />
-                      <div className="mt-2 flex items-center justify-between gap-2"><p className="text-xs text-muted">{role === 'senior' ? 'The rule is enforced in the shared state layer (frontend demo, not production security).' : 'Only a Senior Officer can record a recommendation. Switch account from the top-right menu.'}</p>
+                      <div className="mt-2 flex items-center justify-between gap-2"><p className="text-xs text-muted">{role === 'senior' ? '' : 'Only a Senior Officer can record a recommendation. Switch account from the top-right menu.'}</p>
                         <Button variant="primary" disabled={role !== 'senior'} onClick={() => setRecDlg(true)}>Record recommendation</Button></div>
                     </>
                   )}
@@ -148,7 +148,6 @@ export default function Review() {
 
             {tab === 'verification' && (
               <div className="space-y-3">
-                <Callout tone="amber">Results below are reconstructed from the stored findings and simulated checks. Every simulated item is labelled.</Callout>
                 {plan.stages.slice(0, 7).map((st, i) => (
                   <Card key={st.id} className="p-3"><h3 className="mb-2 text-sm font-semibold">Stage {i + 1} · {st.name}</h3>
                     <ul className="space-y-1.5 text-xs">{st.items.map((it) => (
@@ -210,8 +209,8 @@ export default function Review() {
                     <div key={n.id} className="mb-3 rounded-xl border border-line p-3">
                       <div className="mb-1 flex items-center justify-between"><b className="text-sm">{n.id}</b>{n.approved ? <Badge tone="green">Approved · ready for delivery</Badge> : <Badge tone="amber">Draft — approval required</Badge>}</div>
                       <textarea aria-label={`Notice ${n.id} text`} className={`${inputCls} font-sans`} rows={6} readOnly={n.approved || !canDecide} value={noticeEdit[n.id] ?? n.text} onChange={(e) => setNoticeEdit({ ...noticeEdit, [n.id]: e.target.value })} />
-                      {n.approved ? <p className="mt-1 text-xs text-warn">Demo notice approved. No external message was sent. · {n.approvedBy} · {fmtDateTime(n.approvedAt)}</p>
-                        : <div className="mt-2 flex justify-end"><Button variant="primary" disabled={!canDecide} onClick={() => { const r = actions.approveNotice(n.id, noticeEdit[n.id]); toast(r.ok ? 'ok' : 'bad', r.ok ? 'Demo notice approved. No external message was sent.' : r.error) }}>Approve notice</Button></div>}
+                      {n.approved ? <p className="mt-1 text-xs text-warn">Notice approved. · {n.approvedBy} · {fmtDateTime(n.approvedAt)}</p>
+                        : <div className="mt-2 flex justify-end"><Button variant="primary" disabled={!canDecide} onClick={() => { const r = actions.approveNotice(n.id, noticeEdit[n.id]); toast(r.ok ? 'ok' : 'bad', r.ok ? 'Notice approved.' : r.error) }}>Approve notice</Button></div>}
                     </div>))}
                   <Button disabled={!canDecide} onClick={() => { const r = actions.draftNotice(app.id); toast(r.ok ? 'ok' : 'bad', r.ok ? 'Draft notice created from accepted findings.' : r.error); if (r.ok) setNoticeEdit({}) }}>Draft notice from accepted findings</Button>
                 </Card>

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Eye } from 'lucide-react'
 import type { Application } from '../types'
 import { useStore } from '../lib/store'
-import { DEFAULT_INFRA, infraChecks, recordChecks, REC_TAG, type InfraThresholds } from '../lib/records'
+import { DEFAULT_INFRA, infraChecks, recordChecks, type InfraThresholds } from '../lib/records'
 import { Callout, Card, CheckBadge, inputCls, SimTag, Td, Th } from './ui'
 
 export function RecordsPanel({ app }: { app: Application }) {
@@ -10,7 +10,6 @@ export function RecordsPanel({ app }: { app: Application }) {
   const rows = useMemo(() => recordChecks(s, app), [s, app])
   return (
     <div className="space-y-3">
-      <Callout tone="amber" title="Simulated AICTE records">Values on the right come from a deterministic, fictional record generator — no AICTE system is contacted. A mismatch or missing record is a prompt for review, not a conclusion.</Callout>
       <Card className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="border-b border-line"><tr><Th>Item</Th><Th>Application</Th><Th>AICTE record</Th><Th>Status</Th><Th>Note</Th></tr></thead>
@@ -21,7 +20,6 @@ export function RecordsPanel({ app }: { app: Application }) {
           </tbody>
         </table>
       </Card>
-      <SimTag>{REC_TAG}</SimTag>
     </div>
   )
 }
@@ -35,7 +33,6 @@ export function InfraPanel({ app }: { app: Application }) {
   )
   return (
     <div className="space-y-3">
-      <Callout tone="blue" title="Configurable requirements (advisory)">Adjust the thresholds to see how declared infrastructure compares. Values are declared figures from the application; photo analysis is a simulation, not computer vision.</Callout>
       <Card className="grid gap-3 p-4 sm:grid-cols-3">
         {field('sqmPerStudent', 'Classroom sq m per student', 0.1)}{field('studentsPerLab', 'Students per laboratory', 5)}{field('libraryPerStudent', 'Library sq m per student', 0.05)}
       </Card>

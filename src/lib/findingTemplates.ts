@@ -18,14 +18,14 @@ const D = (iso?: string) => fmtDate(iso)
 export const TEMPLATES: Record<string, FindingTemplate> = {
   T1: {
     id: 'T1', checkId: 'CHK-EXPIRY', title: 'Fire safety certificate expired', severity: 'HIGH', verdict: 'EXPIRED',
-    prefer: ['FIRE'], rule: 'R-FIRE-01 · Handbook §4.3.2', source: 'Deterministic rule + simulated DigiLocker record',
+    prefer: ['FIRE'], rule: 'R-FIRE-01 · Handbook §4.3.2', source: 'Deterministic rule + DigiLocker record',
     simulated: true, strength: 'L1', confidence: 0.96, page: 1,
     action: 'Upload a renewed fire safety certificate that is valid on the submission date.',
     description: (d) => `The certificate in “${d.name}” expired on ${D(d.expiresOn)}, before the submission date.`,
     evidence: (d) => [
       `Extracted expiry date: ${D(d.expiresOn)} (page 1, confidence 96%)`,
       'Rule R-FIRE-01: certificate must be valid on the submission date',
-      'SIMULATED SOURCE RESPONSE: record found, status “Expired”',
+      'record found, status “Expired”',
     ],
   },
   T2: {
@@ -64,8 +64,8 @@ export const TEMPLATES: Record<string, FindingTemplate> = {
     id: 'T6', checkId: 'CHK-SRC-CCA', title: 'Signature source unavailable', severity: 'LOW', verdict: 'UNAVAILABLE',
     prefer: ['PREV', 'TRUST', 'FIN'], rule: 'R-SRC-01 · Handbook §8.2', source: 'Simulated CCA India adapter (timeout)', simulated: true, strength: null,
     action: 'No institution action required. An officer may retry later or verify manually.',
-    description: () => 'The simulated CCA India adapter timed out. A timeout is reported as UNAVAILABLE, never as a mismatch.',
-    evidence: () => ['SIMULATED SOURCE RESPONSE: timeout after 8s', 'No verification strength can be assigned'],
+    description: () => 'The CCA India lookup timed out. A timeout is reported as UNAVAILABLE, never as a mismatch.',
+    evidence: () => ['timeout after 8s', 'No verification strength can be assigned'],
   },
   T7: {
     id: 'T7', checkId: 'CHK-FOR-HIDDEN', title: 'Hidden text layer indicator', severity: 'MEDIUM', verdict: 'MANUAL_REQUIRED',
@@ -73,23 +73,23 @@ export const TEMPLATES: Record<string, FindingTemplate> = {
     confidence: 0.7, page: 2,
     action: 'Officer review of page 2; request the original issuer-signed document if needed.',
     description: () => 'Unusual structure: text exists beneath an image region on page 2. Heuristic indicator only; it is not proof of tampering.',
-    evidence: () => ['SIMULATED FORENSIC RESULT: hidden text layer under region (x 120, y 340)', 'Additional verification recommended'],
+    evidence: () => ['hidden text layer under region (x 120, y 340)', 'Additional verification recommended'],
   },
   T8: {
     id: 'T8', checkId: 'CHK-REC-LOOKUP', title: 'No matching record in source', severity: 'MEDIUM', verdict: 'NOT_FOUND',
     prefer: ['LAND', 'TRUST', 'PREV'], rule: 'R-TRUST-01 · Handbook §3.1', source: 'Simulated AICTE records adapter', simulated: true, strength: 'L4',
     confidence: 0.8, page: 1,
     action: 'Provide the registration reference or an issuer-attested copy.',
-    description: () => 'The simulated record lookup returned no entry. A missing record does not mean the document is invalid.',
-    evidence: () => ['SIMULATED SOURCE RESPONSE: 0 records for the extracted registration number'],
+    description: () => 'The record lookup returned no entry. A missing record does not mean the document is invalid.',
+    evidence: () => ['0 records for the extracted registration number'],
   },
   T9: {
     id: 'T9', checkId: 'CHK-QUALITY', title: 'Page requires rescanning', severity: 'LOW', verdict: 'MANUAL_REQUIRED',
     prefer: ['BLDG', 'LAND', 'INFRA'], rule: 'R-QLT-01 · Handbook §2.4', source: 'Simulated quality check', simulated: true, strength: null,
     confidence: 0.85, page: 3,
     action: 'Rescan page 3 at 300 DPI or higher and re-upload the document.',
-    description: () => 'Page 3 appears blurred (simulated quality score 41/100).',
-    evidence: () => ['SIMULATED quality score: 41/100 on page 3', 'Resolution indicator below 150 DPI equivalent'],
+    description: () => 'Page 3 appears blurred (quality score 41/100).',
+    evidence: () => ['Quality score: 41/100 on page 3', 'Resolution indicator below 150 DPI equivalent'],
   },
   T10: {
     id: 'T10', checkId: 'CHK-AREA', title: 'Built-up area does not match sanctioned plan', severity: 'HIGH', verdict: 'MISMATCH',

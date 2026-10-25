@@ -13,8 +13,7 @@ export default function Proofs() {
   const cur = proofs.find((p) => p.id === sel) ?? proofs[0]
   return (
     <>
-      <PageHeader title="Proof slips" sub="Prototype artifacts summarising recorded verification results. Generate them from an application that has completed verification." />
-      <Callout tone="amber" title="Prototype only">Proof records live in this browser’s localStorage, so they can be verified here but not from another person’s browser. No cryptographic signature is applied.</Callout>
+      <PageHeader title="Proof slips" sub="Proof slips summarising recorded verification results. Generate one from an application that has completed verification." />
       <div className="mt-5">
         {proofs.length === 0 ? <Empty icon={<QrCode className="h-8 w-8" />} title="No proof slips yet" body="Open a verified application and choose “Generate proof slip”." /> : (
           <div className="space-y-4">

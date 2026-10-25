@@ -43,7 +43,7 @@ export function Guard({ roles, children }: { roles: Role[]; children?: ReactNode
     return (
       <div className="mx-auto mt-24 max-w-md space-y-4 p-6">
         <Callout tone="amber" title="This area is not available to your current demo role">
-          You are signed in as <b>{ROLE_LABEL[s.session.role]}</b>. This area is for {roles.map((r) => ROLE_LABEL[r]).join(' / ')}. Role checks in this prototype are a frontend demonstration, not production security.
+          You are signed in as <b>{ROLE_LABEL[s.session.role]}</b>. This area is for {roles.map((r) => ROLE_LABEL[r]).join(' / ')}.
         </Callout>
         <div className="flex gap-2"><Link to={roleHome(s.session.role)}><Button variant="primary">Go to my workspace</Button></Link><Link to="/login"><Button>Switch account</Button></Link></div>
       </div>
@@ -137,9 +137,6 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
 
   return (
     <div className={cn('min-h-screen', area === 'officer' && 'officer-theme')}>
-      <div className="no-print bg-warn/10 px-3 py-1 text-center text-[11px] font-medium text-warn">
-        DEMO MODE · Frontend-only prototype · Authentication, verification and official sources are simulated · Data lives in this browser only
-      </div>
       <div className="flex">
         <aside className={cn('no-print sticky top-3 m-3 hidden h-[calc(100vh-1.5rem)] shrink-0 flex-col rounded-3xl bg-surface md:flex', collapsed ? 'w-16' : 'w-60')}>
           <div className="flex h-14 items-center justify-between border-b border-line px-3">
@@ -195,7 +192,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
             </motion.div>
           </main>
           <footer className="no-print px-6 py-3 text-center text-[11px] text-muted">
-            PRAMAAN prototype · Not affiliated with or endorsed by AICTE · Synthetic data only · Handbook in, evidence out, officer decides.
+            PRAMAAN · Handbook in, evidence out, officer decides.
           </footer>
         </div>
       </div>

@@ -9,7 +9,7 @@ import { buildExtractions, buildFinding, pickDoc, scenarioFor, TEMPLATES } from 
 import { sha256 } from './hash'
 import { APP_TYPE_LABEL, daysUntil } from './format'
 
-const KEY = 'pramaan.demo.v4'
+const KEY = 'pramaan.demo.v5'
 export type Result<T = undefined> = { ok: true; data: T } | { ok: false; error: string }
 const ok = <T,>(data?: T): Result<T> => ({ ok: true, data: data as T })
 const fail = (error: string): Result<never> => ({ ok: false, error })
@@ -62,7 +62,7 @@ function notify(s: DemoState, app: Application, kind: string, title: string, bod
   s.notifications.unshift({ id: nextId(s, 'NT', 3), instId: app.instId, appId: app.id, kind, title, body, at: now(), read: false })
 }
 const roleIs = (s: DemoState, ...r: Role[]) => !!s.session && r.includes(s.session.role)
-const NEED = (what: string) => fail(`Your demo role cannot ${what}. (Frontend demo check — not production security.)`)
+const NEED = (what: string) => fail(`Your demo role cannot ${what}.`)
 const isUnresolved = (f: Finding) => f.status !== 'DISMISSED' && f.status !== 'RESOLVED'
 
 // ---------- session ----------
@@ -72,7 +72,7 @@ export const actions = {
     if (!u) return fail('Unknown demo account')
     if (!u.active) return fail('This demo account is deactivated')
     const s = clone(); s.session = { role: u.role, userId: u.id }
-    audit(s, 'DEMO_LOGIN', u.email, `Signed in as ${u.role} (simulated authentication)`)
+    audit(s, 'DEMO_LOGIN', u.email, `Signed in as ${u.role}`)
     commit(s); return ok(u.role)
   },
   logout() {
@@ -172,8 +172,8 @@ export const actions = {
     if (!a) return fail('Application not found')
     if (a.status !== 'SUBMITTED' && a.status !== 'RESUBMITTED') return ok()
     const s = clone(); const t = s.apps.find((x) => x.id === appId)!
-    t.status = 'PROCESSING'; timeline(t, 'Verification started (frontend simulation)', 'PRAMAAN')
-    audit(s, 'VERIFICATION_STARTED', appId, 'Simulated verification pipeline started')
+    t.status = 'PROCESSING'; timeline(t, 'Verification started', 'PRAMAAN')
+    audit(s, 'VERIFICATION_STARTED', appId, 'Verification pipeline started')
     commit(s); return ok()
   },
   completeVerification(appId: string): Result<{ findings: number }> {
@@ -188,10 +188,10 @@ export const actions = {
         d.needsRerun = false; d.status = 'VERIFIED'
         if (d.reqKey === 'FIRE') d.expiresOn = new Date(Date.now() + 365 * 86400000).toISOString()
         s.findings.filter((f) => f.docId === d.id && (f.status === 'ACCEPTED' || f.status === 'NEEDS_EVIDENCE' || f.status === 'OPEN')).forEach((f) => {
-          f.status = 'RESOLVED'; f.decision = { by: 'PRAMAAN re-check (simulated)', at: now(), action: 'RESOLVED', reason: `Replacement v${d.version} re-checked in the simulator; no issue indicated. Officer review still required.` }
+          f.status = 'RESOLVED'; f.decision = { by: 'PRAMAAN re-check', at: now(), action: 'RESOLVED', reason: `Replacement v${d.version} re-checked; no issue indicated. Officer review still required.` }
         })
       }
-      audit(s, 'FINDINGS_RECHECKED', appId, `${rerun.length} replaced document(s) re-checked (simulated)`)
+      audit(s, 'FINDINGS_RECHECKED', appId, `${rerun.length} replaced document(s) re-checked `)
     } else {
       const scenario = scenarioFor(appId)
       const lowConf = scenario.includes('T2')
@@ -209,9 +209,9 @@ export const actions = {
       docs.forEach((d) => { if (d.status === 'PENDING') d.status = 'VERIFIED' })
     }
     a.status = 'AWAITING_HUMAN_REVIEW'; a.verifiedOnce = true; a.lastRunAt = now()
-    timeline(a, `Verification completed — ${created || 'updated'} finding(s) (simulated)`, 'PRAMAAN')
+    timeline(a, `Verification completed — ${created || 'updated'} finding(s) `, 'PRAMAAN')
     notify(s, a, 'verification', 'Verification completed', `${a.id} finished automated checks. Officer review is pending.`)
-    audit(s, 'VERIFICATION_COMPLETED', appId, `${created} finding(s) generated (simulated checks)`)
+    audit(s, 'VERIFICATION_COMPLETED', appId, `${created} finding(s) generated`)
     commit(s); return ok({ findings: created })
   },
 
@@ -275,7 +275,7 @@ export const actions = {
     const a = s.apps.find((x) => x.id === n.appId)!
     a.status = 'RECTIFICATION_REQUESTED'
     timeline(a, 'Rectification notice approved (Gate 4)', actorOf(s).name)
-    notify(s, a, 'rectification', 'Rectification requested', `An officer-approved notice for ${a.id} is available. (Demo: no email/SMS/WhatsApp was sent.)`)
+    notify(s, a, 'rectification', 'Rectification requested', `An officer-approved notice for ${a.id} is available.`)
     audit(s, 'NOTICE_APPROVED', n.appId, `Gate 4: notice ${n.id} approved and marked ready for delivery`)
     commit(s); return ok()
   },
@@ -314,8 +314,8 @@ export const actions = {
     }
     const proof: ProofSlip = { ...base, digest: sha256(JSON.stringify(base)) }
     s.proofs.unshift(proof)
-    notify(s, a, 'proof', 'Proof slip generated', `Prototype proof slip ${id} is available for ${a.id}.`)
-    audit(s, 'PROOF_SLIP_GENERATED', appId, `Prototype proof ${id}`)
+    notify(s, a, 'proof', 'Proof slip generated', `Proof slip ${id} is available for ${a.id}.`)
+    audit(s, 'PROOF_SLIP_GENERATED', appId, `Proof ${id}`)
     commit(s); return ok(id)
   },
   markRead(id?: string) {

@@ -55,7 +55,7 @@ export default function AppDetail() {
   const makeProof = () => {
     const r = actions.generateProof(app.id)
     if (!r.ok) { toast('bad', r.error); return }
-    toast('ok', 'Prototype proof slip generated.')
+    toast('ok', 'Proof slip generated.')
     nav('/institution/proofs')
   }
 
@@ -105,7 +105,7 @@ export default function AppDetail() {
               <Card className="p-4">
                 <h2 className="mb-2 font-semibold">Verification status</h2>
                 {!app.verifiedOnce ? <p className="text-sm text-muted">{app.status === 'DRAFT' ? 'Submit the application to start verification.' : 'Verification has not completed yet.'}</p> : (
-                  <p className="text-sm text-muted">Last run {fmtDateTime(app.lastRunAt)} · {findings.length} finding(s) · {findings.filter((f) => f.status === 'OPEN').length} awaiting officer decision. <span className="text-warn">Results are simulated.</span></p>)}
+                  <p className="text-sm text-muted">Last run {fmtDateTime(app.lastRunAt)} · {findings.length} finding(s) · {findings.filter((f) => f.status === 'OPEN').length} awaiting officer decision.</p>)}
                 {app.recommendation && <Callout tone="green" title="Officer recommendation recorded">{app.recommendation.text}</Callout>}
               </Card>
               {missing.length > 0 && app.status === 'DRAFT' && <Callout tone="amber" title={`${missing.length} mandatory document(s) missing`}>Upload them before submitting.</Callout>}
@@ -137,7 +137,7 @@ export default function AppDetail() {
             {notices.map((n) => (
               <Card key={n.id} className="p-4"><div className="mb-1 flex items-center justify-between"><h2 className="font-semibold">Officer-approved notice {n.id}</h2><span className="text-xs text-muted">Approved by {n.approvedBy} · {fmtDateTime(n.approvedAt)}</span></div>
                 <pre className="whitespace-pre-wrap rounded-xl bg-raised p-3 font-sans text-sm">{n.text}</pre>
-                <p className="mt-2 text-xs text-warn">Demo notice approved. No external message was sent.</p></Card>
+                <p className="mt-2 text-xs text-warn">Notice approved.</p></Card>
             ))}
             {rectifying && (
               <>

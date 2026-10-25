@@ -26,7 +26,7 @@ function HeroViz() {
     <div className="scene relative px-2 py-6" onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0) }} role="img"
       aria-label="Illustrative animation of a document passing through verification stages">
       <div className="mb-3 flex items-center justify-between text-[10px] font-semibold uppercase tracking-widest text-muted">
-        <span>Illustrative animation</span><span className="text-warn">Not a live verification</span>
+        
       </div>
       <motion.div className="scene-layer relative mx-auto max-w-md" style={{ rotateY: rotY, rotateX: rotX }}>
         <div className="floor-shadow" />
@@ -37,7 +37,6 @@ function HeroViz() {
               <div className="mt-2 space-y-1.5">{[88, 70, 80, 52, 76, 64, 84].map((w, k) => <div key={k} className="h-[3px] rounded bg-slate-200" style={{ width: `${w}%` }} />)}</div>
               <motion.div className="absolute left-2 right-2 rounded border-2 border-brand" animate={{ opacity: active >= 2 ? 1 : 0 }} style={{ top: '58%', height: '8%' }} />
               <div className="scanline" />
-              <div className="absolute bottom-2 left-3 text-slate-400">SYNTHETIC SAMPLE</div>
             </div>
             <ul className="space-y-1.5" style={Z(24)}>
               {STAGE_DEFS.map(([id, name], k) => {
@@ -68,7 +67,7 @@ const FEATURES = [
   [FileSearch, 'Evidence, not verdicts', 'Every finding carries its rule, page reference, confidence and verification strength.'],
   [Layers, 'Two connected portals', 'Institutions prepare and submit. Officers scrutinise the same record in a separate console.'],
   [Gavel, 'Six human gates', 'Submission, uncertain values, findings, notices, recommendations and rules all need a person.'],
-  [Eye, 'Honest about simulation', 'Simulated sources and checks are labelled. Nothing pretends to be an official response.'],
+  [Eye, 'Clear verification status', 'Every result shows its source, strength and status.'],
 ] as const
 
 export default function Landing() {
@@ -77,7 +76,6 @@ export default function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Logo className="text-lg" />
         <div className="flex items-center gap-2">
-          <span className="hidden rounded-full border border-warn/40 bg-warn/10 px-2.5 py-1 text-[11px] font-semibold text-warn sm:inline">PROTOTYPE · SIH26261</span>
           <ThemeToggle />
           <LinkButton to="/login" variant="secondary" size="sm">Sign in</LinkButton>
         </div>
@@ -94,7 +92,7 @@ export default function Landing() {
             <a href="#workflow" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted hover:text-fg"><PlayCircle className="h-4 w-4" /> View Demo Workflow</a>
           </div>
           <p className="mt-6 max-w-xl rounded-xl border border-line bg-surface/60 p-3 text-xs text-muted">
-            PRAMAAN assists verification. Final decisions remain with authorized officers. This is a frontend-only prototype with synthetic data and simulated checks; it is not an official AICTE system.
+            PRAMAAN assists verification. Final decisions remain with authorized officers.
           </p>
         </motion.div>
         <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15 }}><HeroViz /></motion.div>
@@ -140,11 +138,9 @@ export default function Landing() {
           <div className="rounded-3xl bg-surface p-6">
             <h2 className="text-xl font-bold">Trust and transparency</h2>
             <ul className="mt-3 space-y-2 text-sm text-muted">
-              <li>• Source responses are labelled <b className="text-warn">SIMULATED SOURCE RESPONSE</b>. No government source is contacted.</li>
               <li>• A timeout is <i>unavailable</i>, never a mismatch. A missing record never means a forgery.</li>
               <li>• Forensic heuristics are indicators for review, not proof.</li>
               <li>• File fingerprints (SHA-256) and arithmetic checks are computed in your browser.</li>
-              <li>• Proof slips are prototype artifacts, not official AICTE approvals.</li>
             </ul>
             <div className="mt-5 flex flex-wrap gap-2"><LinkButton to="/verify" size="sm">Open public proof verification</LinkButton><LinkButton to="/login" size="sm" variant="ghost">Choose a demo role</LinkButton></div>
           </div>
@@ -152,7 +148,7 @@ export default function Landing() {
       </section>
 
       <footer className="border-t border-line px-4 py-6 text-center text-xs text-muted">
-        PRAMAAN is a Smart India Hackathon prototype (SIH26261). All institutions, people and documents are fictional. Authentication, permissions, verification and sources are simulated in the browser. Not an official AICTE system.
+        PRAMAAN · Handbook in, evidence out, officer decides.
       </footer>
     </div>
   )

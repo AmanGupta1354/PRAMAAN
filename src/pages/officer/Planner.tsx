@@ -19,8 +19,8 @@ export default function Planner() {
   const max = Math.max(1, ...rows.map((r) => r.score))
   return (
     <>
-      <PageHeader title="Inspection planner" sub="Synthetic institutions ranked by open findings, expired documents and repeated discrepancies." />
-      <Callout tone="amber" title="Advisory demo prioritisation">This ranking is a transparent score (high×10, other open×3, expired×5, resolved/dismissed history×1, duplicate-faculty candidates×4). It does not trigger inspections. Officers decide.</Callout>
+      <PageHeader title="Inspection planner" sub="Institutions ranked by open findings, expired documents and repeated discrepancies." />
+      <Callout tone="amber" title="Advisory prioritisation">This ranking is a transparent score (high×10, other open×3, expired×5, resolved/dismissed history×1, duplicate-faculty candidates×4). It does not trigger inspections. Officers decide.</Callout>
       <Card className="mt-5 divide-y divide-line">
         {rows.map((r, i) => (
           <div key={r.inst.id} className="grid items-center gap-3 p-3 sm:grid-cols-[2rem_1fr_12rem_auto]">

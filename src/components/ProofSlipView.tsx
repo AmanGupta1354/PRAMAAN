@@ -24,7 +24,7 @@ export function ProofSlipView({ p, instName }: { p: ProofSlip; instName?: string
   const link = proofUrl(p.id)
   const qr = useQr(link)
   const download = () => {
-    const html = `<!doctype html><meta charset="utf-8"><title>${p.id}</title><body style="font-family:system-ui;max-width:640px;margin:2rem auto"><h1>PRAMAAN proof slip</h1><p><b>Prototype proof slip — not an official AICTE approval.</b></p><p>Proof ${p.id}<br>Application ${p.appId} (${APP_TYPE_LABEL[p.type]})<br>Institution ${p.instCode}<br>Ruleset ${p.rulesetVersion}<br>Issued ${fmtDateTime(p.issuedAt)}<br>${p.officerDecision}</p><ul>${p.checks.map((c) => `<li>${c.name}: ${c.status}${c.strength ? ` (${c.strength}, simulated)` : ''}</li>`).join('')}</ul>${qr ? `<img src="${qr}" alt="QR"/>` : ''}<p>Integrity digest (SHA-256, not a signature): ${p.digest}</p><p>Verify at ${link} (works only in the browser that holds the record).</p></body>`
+    const html = `<!doctype html><meta charset="utf-8"><title>${p.id}</title><body style="font-family:system-ui;max-width:640px;margin:2rem auto"><h1>PRAMAAN proof slip</h1><p><b>Not an official AICTE approval.</b></p><p>Proof ${p.id}<br>Application ${p.appId} (${APP_TYPE_LABEL[p.type]})<br>Institution ${p.instCode}<br>Ruleset ${p.rulesetVersion}<br>Issued ${fmtDateTime(p.issuedAt)}<br>${p.officerDecision}</p><ul>${p.checks.map((c) => `<li>${c.name}: ${c.status}${c.strength ? ` (${c.strength}, simulated)` : ''}</li>`).join('')}</ul>${qr ? `<img src="${qr}" alt="QR"/>` : ''}<p>Integrity digest (SHA-256, not a signature): ${p.digest}</p><p>Verify at ${link}.</p></body>`
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = `${p.id}.html`; a.click(); URL.revokeObjectURL(a.href)
   }
   return (
@@ -33,7 +33,7 @@ export function ProofSlipView({ p, instName }: { p: ProofSlip; instName?: string
         <div>
           <div className="text-xs font-bold tracking-[0.3em] text-accent">PRAMAAN · PROOF SLIP</div>
           <h2 className="mt-1 font-mono text-xl font-bold">{p.id}</h2>
-          <div className="mt-2 inline-block rounded-lg border border-warn/50 bg-warn/10 px-2 py-1 text-xs font-bold text-warn">Prototype proof slip — not an official AICTE approval.</div>
+          <div className="mt-2 inline-block rounded-lg border border-warn/50 bg-warn/10 px-2 py-1 text-xs font-bold text-warn">not an official AICTE approval.</div>
         </div>
         {qr ? <img src={qr} alt={`QR code for ${p.id}`} className="h-28 w-28 rounded-lg bg-white p-1" /> : <div className="h-28 w-28 skeleton" />}
       </div>
@@ -49,8 +49,7 @@ export function ProofSlipView({ p, instName }: { p: ProofSlip; instName?: string
       <table className="mt-3 w-full text-sm"><thead className="text-left text-xs text-muted"><tr><th className="py-1">Document check</th><th>Status</th><th>Strength</th></tr></thead>
         <tbody className="divide-y divide-line">{p.checks.map((c, i) => <tr key={i}><td className="py-1.5 pr-2">{c.name}</td><td><CheckBadge s={c.status} /></td><td><StrengthBadge s={c.strength} simulated={c.simulated} /></td></tr>)}</tbody></table>
       <p className="mt-3 break-all font-mono text-[11px] text-muted">Integrity digest (SHA-256): {p.digest}</p>
-      <p className="mt-1 text-[11px] text-muted"><SimTag>Not a signature</SimTag> This digest only helps detect edits to the stored record in this browser. It is not a government signature.</p>
-      <div className="no-print mt-4 flex flex-wrap gap-2">
+            <div className="no-print mt-4 flex flex-wrap gap-2">
         <Button size="sm" onClick={() => { void navigator.clipboard?.writeText(p.id); toast('ok', 'Proof ID copied.') }}><Copy className="h-3.5 w-3.5" /> Copy ID</Button>
         <Link to={`/verify/${p.id}`}><Button size="sm"><ExternalLink className="h-3.5 w-3.5" /> Open public verification</Button></Link>
         <Button size="sm" onClick={download}><Download className="h-3.5 w-3.5" /> Download HTML</Button>

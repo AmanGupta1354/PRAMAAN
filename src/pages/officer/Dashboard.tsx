@@ -19,12 +19,12 @@ export default function OfficerDashboard() {
   const outcomes = (Object.keys(COLOR) as CheckStatus[]).map((k) => ({ name: CHECK_LABEL[k], key: k, value: s.docs.filter((d) => d.status === k).length })).filter((x) => x.value)
   const hrs = s.apps.filter((a) => a.submittedAt && a.lastRunAt).map((a) => (new Date(a.lastRunAt!).getTime() - new Date(a.submittedAt!).getTime()) / 3600000)
   const avg = hrs.length ? Math.abs(hrs.reduce((x, y) => x + y, 0) / hrs.length) : 0
-  const decisions = s.findings.filter((f) => f.decision && f.decision.by !== 'PRAMAAN re-check (simulated)').sort((a, b) => b.decision!.at.localeCompare(a.decision!.at)).slice(0, 6)
+  const decisions = s.findings.filter((f) => f.decision && f.decision.by !== 'PRAMAAN re-check').sort((a, b) => b.decision!.at.localeCompare(a.decision!.at)).slice(0, 6)
   const top = [...awaiting].sort((a, b) => appStats(s, b).priority - appStats(s, a).priority).slice(0, 5)
 
   return (
     <>
-      <PageHeader title="Officer dashboard" sub={<>All figures are derived from the seeded demo store. <SimTag>Illustrative — not AICTE operational statistics</SimTag></>} />
+      <PageHeader title="Officer dashboard" sub="Application and verification overview." />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Stat label="Awaiting review" value={<AnimatedNumber value={awaiting.length} />} tone="amber" to="/officer/queue?group=review" />
         <Stat label="Processing" value={<AnimatedNumber value={processing.length} />} tone="cyan" to="/officer/queue?group=processing" />

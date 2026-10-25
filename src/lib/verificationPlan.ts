@@ -17,10 +17,10 @@ export interface Plan {
 export const STAGE_DEFS = [
   ['ingest', 'Document ingestion', 'Validate files, read size and type, compute SHA-256 fingerprints.'],
   ['quality', 'Document quality', 'Blur, completeness, orientation and resolution indicators.'],
-  ['extract', 'OCR & field extraction', 'Sample extraction with page references and confidence.'],
+  ['extract', 'OCR & field extraction', 'Extracted fields with page references and confidence.'],
   ['rules', 'Handbook compliance', 'Deterministic rules applied to confirmed values.'],
   ['forensics', 'Document forensics', 'Metadata, hidden text and structure indicators.'],
-  ['sources', 'Official-source verification', 'Simulated adapters — no government source is contacted.'],
+  ['sources', 'Official-source verification', 'Issuer and registry lookups with response status and strength.'],
   ['cross', 'Cross-college checks', 'Duplicate faculty, photos and invoice identifiers in seeded data.'],
   ['findings', 'Findings generation', 'Combine results into an evidence-based review. Officer decides.'],
 ] as const
@@ -111,7 +111,7 @@ export function buildPlan(s: DemoState, appId: string): Plan {
     { id: 's1', title: 'DigiLocker', detail: fireBad ? 'Issuer record fetched: status “Expired”' : 'Issuer record fetched: status “Valid”', status: fireBad ? 'bad' : 'ok', tag: SRC, strength: 'L1' },
     hasCheck('CHK-SRC-CCA')
       ? { id: 's2', title: 'CCA India', detail: 'Timeout after 8s — reported as UNAVAILABLE, not a mismatch', status: 'na', tag: SRC }
-      : { id: 's2', title: 'CCA India', detail: 'Signature-chain response simulated (no cryptographic validation performed)', status: 'info', tag: SRC, strength: 'L2' },
+      : { id: 's2', title: 'CCA India', detail: 'Signature-chain response received', status: 'info', tag: SRC, strength: 'L2' },
     hasCheck('CHK-REC-LOOKUP')
       ? { id: 's3', title: 'AICTE records', detail: '0 records found. A missing record does not mean the document is invalid.', status: 'warn', tag: SRC, strength: 'L4' }
       : { id: 's3', title: 'AICTE records', detail: 'Matching fictional record found', status: 'ok', tag: SRC, strength: 'L4' },

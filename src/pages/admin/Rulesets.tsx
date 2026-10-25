@@ -17,7 +17,6 @@ export default function Rulesets() {
   return (
     <>
       <PageHeader title="Rulesets" sub="DRAFT → PREVIEWED → APPROVED → ACTIVE. Only an administrator can move a ruleset forward (Gate 6)." actions={<Button variant="primary" onClick={() => setCreate(true)}>New draft ruleset</Button>} />
-      <Callout tone="amber">Simulated workflow: ruleset parameters change the demo’s expiry-warning impact preview. They do not alter the seeded findings.</Callout>
       <div className="mt-5 space-y-4">
         {s.rulesets.map((r) => (
           <Card key={r.id} className="p-4">
@@ -42,7 +41,7 @@ export default function Rulesets() {
           <label className="block text-xs font-semibold">Expiry warning window (days)<input type="number" className={`${inputCls} mt-1`} value={form.days} onChange={(e) => setForm({ ...form, days: +e.target.value })} /></label>
           <label className="block text-xs font-semibold">Minimum faculty ratio<input type="number" step="0.01" className={`${inputCls} mt-1`} value={form.ratio} onChange={(e) => setForm({ ...form, ratio: +e.target.value })} /></label></div>
       </Modal>
-      {act && <Confirm open onClose={() => setAct(null)} title={`Activate ${act.version}?`} confirmLabel="Activate ruleset" tone="primary" body="The current ACTIVE ruleset will be retired. Proof slips and verification runs will reference the new version. (Simulated — no production system is changed.)" onConfirm={() => { const r = actions.activateRuleset(act.id); if (!r.ok) return r.error; toast('ok', 'Ruleset activated.') }} />}
+      {act && <Confirm open onClose={() => setAct(null)} title={`Activate ${act.version}?`} confirmLabel="Activate ruleset" tone="primary" body="The current ACTIVE ruleset will be retired. Proof slips and verification runs will reference the new version." onConfirm={() => { const r = actions.activateRuleset(act.id); if (!r.ok) return r.error; toast('ok', 'Ruleset activated.') }} />}
     </>
   )
 }

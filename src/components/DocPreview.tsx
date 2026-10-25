@@ -26,13 +26,13 @@ export function DocPreview({ doc, page = 1, highlight, scan, fields, className }
             <span className="text-slate-500">Page {page}{doc.pages ? `/${doc.pages}` : ''}</span>
           </div>
           <div className="mt-[6%] space-y-[3.4%]">
-            {(fields?.length ? fields.map((f) => [f.field, f.value]) : [['Institution', 'Synthetic institution'], ['Reference', doc.id], ['Valid until', doc.expiresOn ? new Date(doc.expiresOn).toLocaleDateString('en-IN') : '—']]).slice(0, 4).map(([k, v], i) => (
+            {(fields?.length ? fields.map((f) => [f.field, f.value]) : [['Institution', 'Institution'], ['Reference', doc.id], ['Valid until', doc.expiresOn ? new Date(doc.expiresOn).toLocaleDateString('en-IN') : '—']]).slice(0, 4).map(([k, v], i) => (
               <div key={i} className="flex gap-2"><span className="w-[34%] text-slate-500">{k}</span><span className="font-semibold text-slate-800">{v}</span></div>
             ))}
             {[90, 78, 84, 60, 88, 70].map((w, i) => <div key={i} className="h-[3px] rounded bg-slate-200" style={{ width: `${w}%` }} />)}
           </div>
           <div className="absolute inset-x-[8%] bottom-[6%] flex items-end justify-between text-slate-400">
-            <span>SYNTHETIC SAMPLE — NOT A REAL DOCUMENT</span><span className="h-8 w-8 rounded-full border-2 border-slate-300" />
+            <span /><span className="h-8 w-8 rounded-full border-2 border-slate-300" />
           </div>
         </div>
       )}

@@ -36,7 +36,7 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
       if (!r.ok) { toast('bad', r.error); return }
       setPreview(r.data, previewUrl)
       setWarn((w) => ({ ...w, [key]: warnings }))
-      toast('ok', `${file.name} added as a browser-local demo upload (not sent to any server).`)
+      toast('ok', `${file.name} added.`)
     } catch (e) {
       toast('bad', e instanceof Error ? e.message : 'Could not read the file.')
     } finally {
@@ -56,9 +56,7 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
 
   return (
     <div className="space-y-4">
-      <Callout tone="blue" title="Demo uploads stay in your browser">
-        Files are read locally for size, type, SHA-256 and (PDF) page-count checks. Nothing is uploaded to a server. Accepted: PDF, JPG, PNG up to {MAX_FILE_BYTES / 1048576} MB. Previews are lost on refresh; metadata persists.
-      </Callout>
+      
       {editable && (
         <div onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={onDrop}
           className={cn('rounded-2xl border-2 border-dashed p-6 text-center transition', drag ? 'border-accent bg-accent/10' : 'border-line bg-surface')}>
@@ -101,7 +99,7 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
                 {editable && (
                   <div className="flex flex-wrap gap-1.5">
                     <Button size="sm" onClick={() => { pickKey.current = r.key; pickRef.current?.click() }}>{d ? <><Replace className="h-3.5 w-3.5" /> Replace</> : <><FileUp className="h-3.5 w-3.5" /> Upload</>}</Button>
-                    <Button size="sm" onClick={() => sample(r.key)} title="Attach a labelled synthetic sample"><FlaskConical className="h-3.5 w-3.5" /> Sample</Button>
+                    <Button size="sm" onClick={() => sample(r.key)} title="Attach a sample document"><FlaskConical className="h-3.5 w-3.5" /> Sample</Button>
                     {d && app.status === 'DRAFT' && <Button size="sm" variant="danger" aria-label={`Remove ${d.fileName}`} onClick={() => { const x = actions.removeDoc(d.id); toast(x.ok ? 'info' : 'bad', x.ok ? 'Document removed.' : x.error) }}><Trash2 className="h-3.5 w-3.5" /></Button>}
                     {d && <Button size="sm" variant="ghost" onClick={() => setPrev(d)}>Preview</Button>}
                   </div>
