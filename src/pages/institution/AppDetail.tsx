@@ -9,6 +9,7 @@ import { AppBadge, Button, Callout, Card, CheckBadge, Confirm, Empty, inputCls, 
 import { UploadWorkspace } from '../../components/UploadWorkspace'
 import { FindingCard } from '../../components/FindingCard'
 import { VersionCompare } from '../../components/VersionCompare'
+import { downloadReport } from '../../lib/report'
 
 type Tab = 'overview' | 'documents' | 'findings' | 'rectification' | 'timeline'
 
@@ -67,6 +68,7 @@ export default function AppDetail() {
           {app.status === 'DRAFT' && <Button variant="primary" onClick={() => setSubmitOpen(true)}><Send className="h-4 w-4" /> Submit application</Button>}
           {canVerify && <LinkButton to={`/institution/applications/${app.id}/verify`} variant="primary"><Activity className="h-4 w-4" /> {app.status === 'PROCESSING' ? 'Open verification' : 'Start verification'}</LinkButton>}
           {app.verifiedOnce && !canVerify && <LinkButton to={`/institution/applications/${app.id}/verify`}><Activity className="h-4 w-4" /> View verification replay</LinkButton>}
+          {app.verifiedOnce && <Button onClick={() => downloadReport(s, app.id)}>Validation report</Button>}
           {app.verifiedOnce && <Button onClick={makeProof}><QrCode className="h-4 w-4" /> Generate proof slip</Button>}
         </>} />
 

@@ -11,8 +11,10 @@ import {
 import { DocMeta, DocPreview } from '../../components/DocPreview'
 import { FindingCard } from '../../components/FindingCard'
 import { VersionCompare } from '../../components/VersionCompare'
+import { InfraPanel, RecordsPanel } from '../../components/Compliance'
+import { downloadReport } from '../../lib/report'
 
-type Tab = 'overview' | 'documents' | 'verification' | 'findings' | 'faculty' | 'infrastructure' | 'versions' | 'decisions' | 'audit'
+type Tab = 'overview' | 'documents' | 'verification' | 'findings' | 'records' | 'faculty' | 'infrastructure' | 'versions' | 'decisions' | 'audit'
 type Act = 'ACCEPT' | 'DISMISS' | 'REQUEST_EVIDENCE' | 'ESCALATE'
 const ACT_COPY: Record<Act, { title: string; label: string; tone: 'success' | 'danger' | 'primary' | 'secondary'; reason: boolean; need: boolean; body: string }> = {
   ACCEPT: { title: 'Accept finding', label: 'Accept finding', tone: 'success', reason: true, need: false, body: 'Accepting confirms the issue. It becomes part of the rectification notice and stays unresolved until the institution corrects it.' },
@@ -70,7 +72,7 @@ export default function Review() {
   return (
     <>
       <PageHeader title={inst.name} sub={<><span className="font-mono">{app.id}</span> · {APP_TYPE_LABEL[app.type]} · {inst.city}, {inst.state} · Submitted {fmtDate(app.submittedAt)}</>}
-        actions={<><AppBadge s={app.status} /><LinkButton to="/officer/queue">Work queue</LinkButton></>} />
+        actions={<><AppBadge s={app.status} /><Button onClick={() => downloadReport(s, app.id)}>Export validation report</Button><LinkButton to="/officer/queue">Work queue</LinkButton></>} />
       <Callout tone="blue">AI suggests. The authorized officer decides. Nothing on this screen approves or rejects an application automatically.</Callout>
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[22rem_1fr]">
@@ -111,7 +113,7 @@ export default function Review() {
         <div className="min-w-0">
           <Tabs id="review" value={tab} onChange={setTab} tabs={[
             { key: 'overview', label: 'Overview' }, { key: 'documents', label: 'Documents', count: docs.length }, { key: 'verification', label: 'Verification' },
-            { key: 'findings', label: 'Findings', count: findings.length }, { key: 'faculty', label: 'Faculty' }, { key: 'infrastructure', label: 'Infrastructure' },
+            { key: 'findings', label: 'Findings', count: findings.length }, { key: 'records', label: 'AICTE records' }, { key: 'faculty', label: 'Faculty' }, { key: 'infrastructure', label: 'Infrastructure' },
             { key: 'versions', label: 'Version comparison' }, { key: 'decisions', label: 'Decisions' }, { key: 'audit', label: 'Audit history' }]} />
           <div className="mt-4 space-y-4">
             {tab === 'overview' && (
@@ -167,6 +169,8 @@ export default function Review() {
               )
             )}
 
+            {tab === 'records' && <RecordsPanel app={app} />}
+
             {tab === 'faculty' && (
               <Card className="overflow-x-auto"><table className="w-full text-sm"><thead className="border-b border-line"><tr><Th>Name</Th><Th>Designation</Th><Th>Qualification</Th><Th>Photo hash</Th><Th>Cross-college</Th></tr></thead>
                 <tbody className="divide-y divide-line">{s.faculty.filter((f) => f.instId === app.instId).map((f) => {
@@ -179,7 +183,9 @@ export default function Review() {
 
             {tab === 'infrastructure' && (
               <div className="space-y-3">
-                {s.invoices.filter((i) => i.instId === app.instId).length === 0 && <Empty title="No invoices seeded for this institution" />}
+                <InfraPanel app={app} />
+                <h2 className="pt-2 font-semibold">Equipment invoices</h2>
+                {s.invoices.filter((i) => i.instId === app.instId).length === 0 &&<Empty title="No invoices seeded for this institution" />}
                 {s.invoices.filter((i) => i.instId === app.instId).map((inv) => {
                   const sum = inv.lines.reduce((n, l) => n + l.qty * l.rate, 0)
                   const dup = s.invoices.find((o) => o.instId !== inv.instId && o.invoiceNo === inv.invoiceNo)

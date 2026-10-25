@@ -23,10 +23,10 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 | Requirement | Status | Notes |
 | --- | --- | --- |
 | Identify application category → applicable checklist | ✅ | New Institution / Extension of Approval / Increase in Intake, each with its own checklist, handbook clauses and accepted formats; admin can toggle mandatory/optional or add items. |
-| Retrieve records from authorised AICTE systems | 🟡 | Simulated; seeded institution, faculty and invoice records. Previous EoA, approved intake, TER payment status, deficiency status, affidavits and NOCs are **not modelled as separate record types**. |
+| Retrieve records from authorised AICTE systems | 🟡 | Simulated. New **AICTE records** tab cross-checks previous EoA, approved intake, TER payment, deficiency status, affidavits and NOCs against the application (fictional, deterministic records). |
 | OCR + classification + extraction | 🟡 | Sample extraction with page, confidence, and a **Gate 2** (values <80% need human confirmation). Labelled "SAMPLE EXTRACTION — no real OCR". Document classification is implied by checklist slot, not inferred. |
 | Missing fields / incomplete / expired / inconsistent | ✅ | See Objective 1. |
-| Structured validation report | 🟡 | Findings list per application (not an exportable report document). Proof slip is exportable HTML. |
+| Structured validation report | ✅ | "Export validation report" (officer and institution) downloads a standalone HTML report: documents, findings with evidence, records cross-check, infrastructure, audit trail. |
 | Rectification where permitted | ✅ | Officer-approved notice → institution replaces documents → resubmit → re-check only changed documents → version comparison. |
 
 ### 2.2 Anomaly and potential-forgery detection
@@ -47,8 +47,8 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 | Requirement | Status | Notes |
 | --- | --- | --- |
 | Configurable checklists derived from the Handbook | 🟡 | Checklists editable; rulesets have two numeric parameters (expiry window, faculty ratio) and a DRAFT→PREVIEWED→APPROVED→ACTIVE lifecycle with impact preview. There is no free-form rule editor. |
-| Review photos, videos, floor plans, certificates | ❌ / 🟡 | Photos/floor plans can be uploaded and previewed; **no analysis** of them beyond fingerprint and a simulated duplicate-photo flag. |
-| Computer vision to flag discrepancies / inspection need | ❌ | Not built. The *inspection planner* ranks institutions by open findings (advisory only) as a stand-in for "needs inspection". |
+| Review photos, floor plans, certificates | 🟡 | Infrastructure tab checks declared classroom/lab/library figures against editable thresholds, flags missing floor plan/photos, and shows a labelled simulated image check. |
+| Computer vision to flag discrepancies / inspection need | 🟡 | No real CV model; an advisory "physical inspection may be warranted" flag is derived from shortfalls and missing evidence. |
 | Findings advisory, subject to official review | ✅ | No automatic approve/reject anywhere. |
 
 ### 2.5 Dashboard, alerts, audit trail
@@ -96,9 +96,9 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 
 ## 6. Known gaps worth closing (suggested order)
 
-1. **Infrastructure evidence module** — a tab where labs/classrooms/library photos and floor plans are checked against configurable minimums (area per student, lab count), with a clearly labelled simulated image-quality/room-detection result and an "inspection recommended" flag.
-2. **AICTE records panel** — previous EoA status, approved programmes/intake, TER payment, deficiency status, affidavits and NOCs as seeded record types, shown side by side with application fields and cross-checked.
-3. **Exportable validation report** (print/HTML) per application.
+1. ~~Infrastructure evidence module~~ (done — simulated image check, real threshold comparison) — — a tab where labs/classrooms/library photos and floor plans are checked against configurable minimums (area per student, lab count), with a clearly labelled simulated image-quality/room-detection result and an "inspection recommended" flag.
+2. ~~AICTE records panel~~ (done) — — previous EoA status, approved programmes/intake, TER payment, deficiency status, affidavits and NOCs as seeded record types, shown side by side with application fields and cross-checked.
+3. ~~Exportable validation report~~ (done) — (print/HTML) per application.
 4. **Source-response log** — a table of every simulated query with source, timestamp, status.
 5. **Alert rules screen** — configure which events raise alerts and to whom.
 6. Evaluation page with the metrics above computed over a labelled synthetic test set.
