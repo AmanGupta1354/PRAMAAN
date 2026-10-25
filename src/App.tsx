@@ -21,6 +21,7 @@ import UsersPage from './pages/admin/Users'
 import Sources from './pages/admin/Sources'
 import Accuracy from './pages/admin/Accuracy'
 import DemoData from './pages/admin/DemoData'
+import Evaluation from './pages/admin/Evaluation'
 
 export default function App() {
   return (
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="admin/users" element={<Guard roles={['admin']}><UsersPage /></Guard>} />
           <Route path="admin/sources" element={<Guard roles={['admin']}><Sources /></Guard>} />
           <Route path="admin/accuracy" element={<Guard roles={['admin']}><Accuracy /></Guard>} />
+          <Route path="admin/evaluation" element={<Guard roles={['admin']}><Evaluation /></Guard>} />
           <Route path="admin/demo" element={<Guard roles={['admin']}><DemoData /></Guard>} />
         </Route>
       </Route>

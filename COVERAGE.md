@@ -85,9 +85,9 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 
 | Metric | Status |
 | --- | --- |
-| Extraction accuracy / anomaly-detection performance | ❌ not measurable (no real models) |
+| Extraction accuracy / anomaly-detection performance | 🟡 | **Admin → Evaluation** measures real extraction accuracy and hidden-text / edit-detection precision & recall over a small labelled sample set (authored by us — demonstrates the method, not production accuracy). |
 | Validation accuracy / discrepancy reliability | 🟡 "Check accuracy" page shows how often officers upheld each check — a demo of the *mechanism*, tiny sample |
-| Source-verification success rate | 🟡 adapter status page (simulated) |
+| Source-verification success rate | 🟡 | One real live lookup (India Post PIN directory) with UNAVAILABLE handling; other sources are simulated. |
 | Average verification time | 🟡 officer dashboard (demo values) |
 | Alert timeliness | 🟡 notifications with timestamps |
 | Manual-effort reduction | ❌ not measured |

@@ -72,6 +72,7 @@ const ADMIN_NAV: NavItem[] = [
   { to: '/officer/admin/users', label: 'Users', icon: <Users className="h-4 w-4" />, roles: ['admin'] },
   { to: '/officer/admin/sources', label: 'Source adapters', icon: <Plug className="h-4 w-4" />, roles: ['admin'] },
   { to: '/officer/admin/accuracy', label: 'Check accuracy', icon: <BarChart3 className="h-4 w-4" />, roles: ['admin'] },
+  { to: '/officer/admin/evaluation', label: 'Evaluation', icon: <Gauge className="h-4 w-4" />, roles: ['admin'] },
   { to: '/officer/admin/demo', label: 'Demo data', icon: <Trash2 className="h-4 w-4" />, roles: ['admin'] },
 ]
 

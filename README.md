@@ -51,6 +51,12 @@ AI suggests. The authorized officer decides. Nothing is ever approved or rejecte
 
 A proof slip records document-check statuses, simulated strengths, ruleset version, issue time and an audit reference. A SHA-256 **integrity digest** of the record is shown — it detects edits to the stored record in this browser but is **not a cryptographic signature**. Records live in `localStorage`, so a QR link verifies only in the browser that generated it. Every slip reads "Prototype proof slip — not an official AICTE approval."
 
+## Real checks you can demonstrate
+
+- **Evaluation** (Admin → Evaluation): runs the in-browser analysis over seven labelled documents in `public/samples` (six PDFs + one scanned PNG, ground truth in `manifest.json`) and reports field-extraction accuracy, hidden-text and edit-detection precision/recall and average time. Regenerate the PDFs with `node scripts/make-samples.cjs`.
+- **Live lookup**: the verification pipeline queries the public India Post PIN directory (`api.postalpincode.in`) to check an institution's registered city/state. If the service is unreachable the result is reported as UNAVAILABLE, never a mismatch.
+- **Sample test documents** are downloadable from the document upload screen.
+
 ## Tech stack
 
 React 18 · TypeScript · Vite · Tailwind CSS 3 · React Router 6 · Framer Motion · Recharts · Lucide · `qrcode`. State: a small external store (`useSyncExternalStore`) persisted to `localStorage`.

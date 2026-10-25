@@ -1,0 +1,74 @@
+[
+  {
+    "file": "sample-fire-valid.pdf",
+    "label": "Fire safety certificate — valid",
+    "truth": {
+      "expiry": "2028-04-14",
+      "certNo": "FSC/2025/0412",
+      "area": "3650 sq m",
+      "hiddenText": false,
+      "incrementalUpdate": false
+    }
+  },
+  {
+    "file": "sample-fire-expired.pdf",
+    "label": "Fire safety certificate — expired",
+    "truth": {
+      "expiry": "2024-03-09",
+      "certNo": "FSC/2021/0087",
+      "hiddenText": false,
+      "incrementalUpdate": false
+    }
+  },
+  {
+    "file": "sample-fire-hidden-text.pdf",
+    "label": "Fire certificate — hidden text layer",
+    "truth": {
+      "expiry": "2027-06-30",
+      "certNo": "FSC/2023/0555",
+      "hiddenText": true,
+      "incrementalUpdate": false
+    }
+  },
+  {
+    "file": "sample-fire-edited.pdf",
+    "label": "Fire certificate — edited after issue",
+    "truth": {
+      "expiry": "2029-09-01",
+      "certNo": "FSC/2022/0911",
+      "hiddenText": false,
+      "incrementalUpdate": true
+    }
+  },
+  {
+    "file": "sample-faculty-list.pdf",
+    "label": "Faculty list with count",
+    "truth": {
+      "certNo": "FAC/2026/118",
+      "faculty": "52",
+      "hiddenText": false,
+      "incrementalUpdate": false
+    }
+  },
+  {
+    "file": "sample-building-plan.pdf",
+    "label": "Building plan with area",
+    "truth": {
+      "expiry": "2030-12-31",
+      "certNo": "BP/2020/7781",
+      "area": "4200 sq m",
+      "hiddenText": false,
+      "incrementalUpdate": false
+    }
+  },
+  {
+    "file": "sample-fire-scan.png",
+    "label": "Scanned fire certificate (image, needs OCR)",
+    "truth": {
+      "expiry": "2028-08-20",
+      "certNo": "FSC/2024/0733",
+      "hiddenText": false,
+      "incrementalUpdate": false
+    }
+  }
+]

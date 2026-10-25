@@ -67,6 +67,15 @@ export function UploadWorkspace({ app, editable }: { app: Application; editable:
   return (
     <div className="space-y-4">
       
+      <details className="rounded-2xl bg-surface px-4 py-3 text-sm">
+        <summary className="cursor-pointer font-semibold">Test documents you can download and upload</summary>
+        <ul className="mt-2 grid gap-1 text-xs sm:grid-cols-2">
+          {['sample-fire-valid.pdf', 'sample-fire-expired.pdf', 'sample-fire-hidden-text.pdf', 'sample-fire-edited.pdf', 'sample-faculty-list.pdf', 'sample-building-plan.pdf', 'sample-fire-scan.png'].map((f) => (
+            <li key={f}><a className="text-brand underline" href={`/samples/${f}`} download>{f}</a></li>
+          ))}
+        </ul>
+        <p className="mt-2 text-xs text-muted">Realistic test files with known contents. The scanned PNG exercises OCR; the hidden-text and edited PDFs trigger the forensic checks.</p>
+      </details>
       {editable && (
         <div onDragOver={(e) => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={onDrop}
           className={cn('rounded-2xl border-2 border-dashed p-6 text-center transition', drag ? 'border-accent bg-accent/10' : 'border-line bg-surface')}>

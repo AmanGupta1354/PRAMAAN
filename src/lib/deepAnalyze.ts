@@ -32,7 +32,7 @@ export function extractFields(text: string, page: number, conf: number, via: Fie
   if (exp) { expiresOn = parseDate(exp[1], exp[2], exp[3]); add('Expiry date', `${exp[1]}/${exp[2]}/${exp[3]}`) }
   const iss = text.match(/(?:issued?|dated?|date of issue)[^\d]{0,20}(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/i)
   if (iss) add('Issue date', `${iss[1]}/${iss[2]}/${iss[3]}`)
-  const no = text.match(/(?:certificate|cert\.?|reference|ref\.?|licen[cs]e|registration|file|approval)\s*(?:no\.?|number|#)?[\s:.\-]*([A-Z0-9][A-Z0-9/\-]{4,})/i)
+  const no = text.match(/(?:certificate|cert\.?|reference|ref\.?|licen[cs]e|registration|file|approval)\s*(?:no\.?|number|#)[\s:.\-]*((?=[A-Z0-9/\-]*\d)[A-Z0-9][A-Z0-9/\-]{4,})/i)
   if (no) add('Certificate number', no[1])
   const inst = text.split(/\r?\n/).map((l) => l.trim()).find((l) => /\b(institute|college|university|polytechnic|school)\b/i.test(l) && l.length < 90)
   if (inst) add('Institution name', inst)

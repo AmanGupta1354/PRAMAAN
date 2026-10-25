@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { AlertTriangle, ArrowRight, Check, CircleSlash, FastForward, Info, Pause, Play, RotateCcw, ShieldAlert, X } from 'lucide-react'
 import { actions, currentUser, useStore } from '../../lib/store'
+import { lookupPin, type PinResult } from '../../lib/sources'
 import { buildPlan, type ItemStatus, type PlanItem } from '../../lib/verificationPlan'
 import { APP_TYPE_LABEL } from '../../lib/format'
 import { Badge, Button, Card, cn, Empty, LinkButton, PageHeader, Progress, SimTag, StrengthBadge, useToast } from '../../components/ui'
@@ -20,7 +21,18 @@ export default function VerifyPipeline() {
   const toast = useToast()
   const user = currentUser(s)
   const app = s.apps.find((a) => a.id === id && a.instId === user?.instId)
-  const plan = useMemo(() => (app ? buildPlan(s, app.id) : null), [app?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  const basePlan = useMemo(() => (app ? buildPlan(s, app.id) : null), [app?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  const [pin, setPin] = useState<PinResult | null>(null)
+  useEffect(() => { const inst = s.institutions.find((i) => i.id === app?.instId); if (inst) void lookupPin(inst).then(setPin) }, [app?.instId]) // eslint-disable-line react-hooks/exhaustive-deps
+  const plan = useMemo(() => {
+    if (!basePlan) return null
+    const item: PlanItem = {
+      id: 's-pin', title: 'India Post PIN directory (live lookup)', tag: 'LIVE LOOKUP · INDIA POST',
+      detail: !pin ? 'Querying the public PIN directory…' : pin.unavailable ? pin.detail + ' — reported as UNAVAILABLE, not a mismatch' : pin.match ? `${pin.detail} — matches the institution’s registered city and state` : `${pin.detail} — does not match the registered city/state; officer review`,
+      status: !pin ? 'info' : pin.unavailable ? 'na' : pin.match ? 'ok' : 'warn',
+    }
+    return { ...basePlan, stages: basePlan.stages.map((st) => (st.id === 'sources' ? { ...st, items: [...st.items, item] } : st)) }
+  }, [basePlan, pin])
   const [started, setStarted] = useState(false)
   const [running, setRunning] = useState(false)
   const [finished, setFinished] = useState(false)
@@ -213,7 +225,7 @@ function ItemRow({ it }: { it: PlanItem }) {
       className={cn('flex items-start gap-3 rounded-xl border bg-bg/40 p-3', it.status === 'warn' ? 'border-warn/40' : it.status === 'bad' ? 'border-bad/50' : 'border-line')}>
       <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 400, damping: 18 }} className={cn('mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full', TONE[it.status])}><I className="h-3.5 w-3.5" /></motion.span>
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">{it.title}{it.tag && (it.tag.includes('COMPUTED') ? <Badge tone="green">{it.tag}</Badge> : <SimTag>{it.tag}</SimTag>)}{it.strength && <StrengthBadge s={it.strength} simulated />}{it.confirm && <Badge tone="amber">Needs human confirmation (Gate 2)</Badge>}</div>
+        <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">{it.title}{it.tag && ((it.tag.includes('COMPUTED') || it.tag.includes('LIVE')) ? <Badge tone="green">{it.tag}</Badge> : <SimTag>{it.tag}</SimTag>)}{it.strength && <StrengthBadge s={it.strength} simulated />}{it.confirm && <Badge tone="amber">Needs human confirmation (Gate 2)</Badge>}</div>
         <p className="mt-0.5 break-words text-xs text-muted">{it.detail}</p>
       </div>
       {it.right && <div className={cn('text-sm font-bold tabular-nums', it.status === 'warn' && 'text-warn')}>{it.right}</div>}
