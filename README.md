@@ -8,13 +8,14 @@ PRAMAAN is a **frontend-only prototype** of an AI-assisted application validatio
 
 ## Features
 
-- **Landing page** with an animated pipeline illustration (clearly labelled illustrative).
+- **Landing page** with a 3D, mouse-reactive pipeline illustration (clearly labelled illustrative).
+- See [COVERAGE.md](COVERAGE.md) for a requirement-by-requirement comparison with SIH26261 and the USPs.
 - **Institution Portal** — dashboard (with charts), new application (3 types, dynamic checklists), drag-and-drop/browse uploads with real local validation, SHA-256 fingerprinting and PDF page counting, application details, rectification & re-upload with version comparison, proof slips, notifications (messaging simulator).
 - **Animated 8-stage verification pipeline** — ingestion, quality, OCR/extraction, handbook compliance, forensics, official sources, cross-college checks, findings generation. Live activity feed, pause / skip / restart, replay of earlier runs. Every simulated item carries a label (`SIMULATED CHECK`, `SIMULATED SOURCE RESPONSE`, `SIMULATED FORENSIC RESULT`, …).
 - **AICTE Officer Console** — dashboard, filterable/sortable work queue, split-screen review workspace (documents + preview + extracted-field highlighting on the left; Overview / Documents / Verification / Findings / Faculty / Infrastructure / Version comparison / Decisions / Audit history on the right), finding decisions, notices, senior recommendation, inspection planner (advisory).
 - **Administration** — rulesets (DRAFT → PREVIEWED → APPROVED → ACTIVE), checklist management, demo users, source-adapter status, check-accuracy view, hash-chained audit log, demo-data reset.
 - **Proof slips** with QR codes and a **public verification page** (`/verify/:id`).
-- Light/dark theme (dark default), responsive layouts, toasts, confirmation dialogs, skeleton/empty/error states.
+- Soft-extruded (neumorphic) spatial UI with light (default) and dark themes, responsive layouts, toasts, confirmation dialogs, skeleton/empty/error states.
 
 ## Human-in-the-loop gates
 

@@ -130,7 +130,7 @@ export default function VerifyPipeline() {
               return (
                 <li key={st.id}>
                   <button onClick={() => setView(i === stage && !finished ? null : i)} disabled={!started || (i > stage && !finished)}
-                    className={cn('flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left text-sm transition disabled:opacity-50', shown === i && started ? 'bg-accent/10' : 'hover:bg-raised')}>
+                    className={cn('flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left text-sm transition disabled:opacity-50', shown === i && started ? 'neu-pressed' : 'hover:text-brand')}>
                     <span className={cn('relative grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold',
                       state === 'done' ? (tone === 'bad' ? 'bg-bad/20 text-bad' : tone === 'warn' ? 'bg-warn/20 text-warn' : 'bg-ok/20 text-ok') : state === 'active' ? 'bg-accent/20 text-accent' : 'bg-raised text-muted')}>
                       {state === 'active' && <motion.span className="absolute inset-0 rounded-full border border-accent" animate={{ scale: [1, 1.5], opacity: [0.8, 0] }} transition={{ repeat: Infinity, duration: 1.2 }} />}

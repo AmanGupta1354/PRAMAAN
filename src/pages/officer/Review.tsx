@@ -80,7 +80,7 @@ export default function Review() {
             <h2 className="mb-2 text-sm font-semibold">Documents</h2>
             <ul className="space-y-1">
               {docs.map((d) => (
-                <li key={d.id}><button onClick={() => { setDocSel(d.id); setPage(1); setField('') }} className={cn('flex w-full items-center justify-between gap-2 rounded-xl px-2 py-1.5 text-left text-sm', doc?.id === d.id ? 'bg-accent/10' : 'hover:bg-raised')}>
+                <li key={d.id}><button onClick={() => { setDocSel(d.id); setPage(1); setField('') }} className={cn('flex w-full items-center justify-between gap-2 rounded-xl px-2 py-1.5 text-left text-sm', doc?.id === d.id ? 'neu-pressed' : 'hover:text-brand')}>
                   <span className="min-w-0"><span className="block truncate">{d.name}</span><span className="text-[11px] text-muted">v{d.version} · {fmtSize(d.size)}</span></span><CheckBadge s={d.status} /></button></li>
               ))}
             </ul>

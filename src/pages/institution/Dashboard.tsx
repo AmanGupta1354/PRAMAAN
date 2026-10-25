@@ -41,7 +41,7 @@ export default function InstDashboard() {
             <ResponsiveContainer>
               <PieChart>
                 <Pie data={pie} dataKey="value" nameKey="name" innerRadius={48} outerRadius={80} paddingAngle={3} stroke="none">{pie.map((p) => <Cell key={p.name} fill={p.fill} />)}</Pie>
-                <Tooltip contentStyle={{ background: 'rgb(12 24 52)', border: '1px solid rgb(36 54 96)', borderRadius: 12, color: '#e8eefa' }} />
+                <Tooltip contentStyle={{ background: 'rgb(var(--surface))', border: 'none', boxShadow: 'var(--neu-out-sm)', borderRadius: 12, color: 'rgb(var(--fg))' }} />
               </PieChart>
             </ResponsiveContainer>
           </div>

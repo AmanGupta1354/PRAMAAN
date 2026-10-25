@@ -28,7 +28,7 @@ export function ProofSlipView({ p, instName }: { p: ProofSlip; instName?: string
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = `${p.id}.html`; a.click(); URL.revokeObjectURL(a.href)
   }
   return (
-    <div className="print-area rounded-2xl border border-line bg-surface p-5 shadow-card">
+    <div className="print-area rounded-2xl border border-line bg-surface p-5 ">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="text-xs font-bold tracking-[0.3em] text-accent">PRAMAAN · PROOF SLIP</div>

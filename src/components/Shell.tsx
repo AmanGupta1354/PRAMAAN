@@ -29,7 +29,7 @@ export function Logo({ className }: { className?: string }) {
 export function ThemeToggle() {
   const { dark, toggle } = useTheme()
   return (
-    <button onClick={toggle} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'} className="rounded-xl border border-line bg-raised p-2 text-muted hover:text-fg">
+    <button onClick={toggle} aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'} className="rounded-xl bg-surface p-2 text-muted hover:text-fg neu-press">
       {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </button>
   )
@@ -109,7 +109,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
     <nav className="flex flex-col gap-1 p-2" aria-label="Main">
       {items.filter((i) => !i.roles || (role && i.roles.includes(role))).map((i) => (
         <NavLink key={i.to} to={i.to} end={i.end} title={i.label}
-          className={({ isActive }) => cn('flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition', isActive ? 'bg-brand/15 font-semibold text-brand' : 'text-muted hover:bg-raised hover:text-fg')}>
+          className={({ isActive }) => cn('flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition', isActive ? 'neu-pressed font-semibold text-brand' : 'text-muted hover:text-fg')}>
           {i.icon}{!collapsed && <span className="truncate">{i.label}</span>}
           {!collapsed && i.label === 'Notifications' && unread > 0 && <span className="ml-auto rounded-full bg-warn px-1.5 text-[10px] font-bold text-black">{unread}</span>}
         </NavLink>
@@ -119,7 +119,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
           {!collapsed && <div className="mt-3 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted">Administration</div>}
           {ADMIN_NAV.map((i) => (
             <NavLink key={i.to} to={i.to} title={i.label}
-              className={({ isActive }) => cn('flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition', isActive ? 'bg-brand/15 font-semibold text-brand' : 'text-muted hover:bg-raised hover:text-fg')}>
+              className={({ isActive }) => cn('flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition', isActive ? 'neu-pressed font-semibold text-brand' : 'text-muted hover:text-fg')}>
               {i.icon}{!collapsed && <span className="truncate">{i.label}</span>}
             </NavLink>
           ))}
@@ -136,12 +136,12 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
   }
 
   return (
-    <div className={cn('min-h-screen bg-aurora', area === 'officer' && 'officer-theme')}>
-      <div className="no-print border-b border-warn/30 bg-warn/10 px-3 py-1 text-center text-[11px] font-medium text-warn">
+    <div className={cn('min-h-screen', area === 'officer' && 'officer-theme')}>
+      <div className="no-print bg-warn/10 px-3 py-1 text-center text-[11px] font-medium text-warn">
         DEMO MODE · Frontend-only prototype · Authentication, verification and official sources are simulated · Data lives in this browser only
       </div>
       <div className="flex">
-        <aside className={cn('no-print sticky top-0 hidden h-screen shrink-0 flex-col border-r border-line bg-surface/80 backdrop-blur md:flex', collapsed ? 'w-16' : 'w-60')}>
+        <aside className={cn('no-print sticky top-3 m-3 hidden h-[calc(100vh-1.5rem)] shrink-0 flex-col rounded-3xl bg-surface md:flex', collapsed ? 'w-16' : 'w-60')}>
           <div className="flex h-14 items-center justify-between border-b border-line px-3">
             {!collapsed && <Logo />}
             <button onClick={() => setCollapsed((c) => !c)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} className="rounded-lg p-1.5 text-muted hover:bg-raised">
@@ -157,7 +157,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="no-print sticky top-0 z-30 flex h-14 items-center gap-3 border-b border-line bg-surface/80 px-3 backdrop-blur sm:px-5">
+          <header className="no-print sticky top-3 z-30 mx-3 mt-3 flex h-14 items-center gap-3 rounded-2xl bg-surface px-3 sm:px-5">
             <button onClick={() => setMobile(true)} aria-label="Open menu" className="rounded-lg p-2 text-muted hover:bg-raised md:hidden"><Menu className="h-5 w-5" /></button>
             <Link to="/" className="md:hidden"><Logo /></Link>
             <Crumbs />
@@ -166,14 +166,14 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
             </span>
             <ThemeToggle />
             <div className="relative">
-              <button onClick={() => setMenu((m) => !m)} aria-haspopup="menu" aria-expanded={menu} className="flex items-center gap-2 rounded-xl border border-line bg-raised px-2.5 py-1.5 text-left text-xs">
+              <button onClick={() => setMenu((m) => !m)} aria-haspopup="menu" aria-expanded={menu} className="flex items-center gap-2 rounded-xl bg-surface px-2.5 py-1.5 text-left text-xs neu-press">
                 <UserCog className="h-4 w-4 text-muted" />
                 <span className="hidden sm:block"><span className="block font-semibold leading-tight">{user?.name}</span><span className="block text-muted leading-tight">{role && ROLE_LABEL[role]}</span></span>
               </button>
               <AnimatePresence>
                 {menu && (
                   <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="menu"
-                    className="absolute right-0 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 shadow-card">
+                    className="absolute right-0 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 ">
                     <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted">Switch demo account</div>
                     {s.users.filter((u) => u.active).map((u) => (
                       <button key={u.id} role="menuitem" onClick={() => switchTo(u.id)}
@@ -194,7 +194,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
               <Outlet />
             </motion.div>
           </main>
-          <footer className="no-print border-t border-line px-6 py-3 text-center text-[11px] text-muted">
+          <footer className="no-print px-6 py-3 text-center text-[11px] text-muted">
             PRAMAAN prototype · Not affiliated with or endorsed by AICTE · Synthetic data only · Handbook in, evidence out, officer decides.
           </footer>
         </div>

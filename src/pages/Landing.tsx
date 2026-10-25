@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import {
   ArrowRight, Check, Cpu, Eye, FileSearch, Fingerprint, Gavel, Layers, Network, PlayCircle, ScanLine, ScrollText, ShieldCheck, Users2,
 } from 'lucide-react'
@@ -14,40 +14,52 @@ function HeroViz() {
   const [i, setI] = useState(0)
   useEffect(() => { const t = setInterval(() => setI((x) => (x + 1) % (STAGE_DEFS.length + 2)), 1100); return () => clearInterval(t) }, [])
   const active = Math.min(i, STAGE_DEFS.length - 1)
+  const mx = useMotionValue(0), my = useMotionValue(0)
+  const rotY = useSpring(useTransform(mx, [-1, 1], [-22, -6]), { stiffness: 80, damping: 18 })
+  const rotX = useSpring(useTransform(my, [-1, 1], [12, 0]), { stiffness: 80, damping: 18 })
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect()
+    mx.set(((e.clientX - r.left) / r.width) * 2 - 1); my.set(((e.clientY - r.top) / r.height) * 2 - 1)
+  }
+  const Z = (z: number) => ({ transform: `translateZ(${z}px)` })
   return (
-    <div className="glass relative rounded-3xl p-5 shadow-card" aria-label="Illustrative animation of a document passing through verification stages">
+    <div className="scene relative px-2 py-6" onMouseMove={onMove} onMouseLeave={() => { mx.set(0); my.set(0) }} role="img"
+      aria-label="Illustrative animation of a document passing through verification stages">
       <div className="mb-3 flex items-center justify-between text-[10px] font-semibold uppercase tracking-widest text-muted">
         <span>Illustrative animation</span><span className="text-warn">Not a live verification</span>
       </div>
-      <div className="grid grid-cols-[1fr_1.1fr] gap-4">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-line bg-white p-3 text-[8px] text-slate-600">
-          <b className="text-slate-900">FIRE SAFETY CERTIFICATE</b>
-          <div className="mt-2 space-y-1.5">{[88, 70, 80, 52, 76, 64, 84].map((w, k) => <div key={k} className="h-[3px] rounded bg-slate-200" style={{ width: `${w}%` }} />)}</div>
-          <motion.div className="absolute left-2 right-2 rounded border-2 border-cyan-500 bg-cyan-400/20" animate={{ top: ['58%', '58%'], opacity: active >= 2 ? 1 : 0 }} style={{ height: '8%' }} />
-          <div className="scanline" />
-          <div className="absolute bottom-2 left-3 text-slate-400">SYNTHETIC SAMPLE</div>
+      <motion.div className="scene-layer relative mx-auto max-w-md" style={{ rotateY: rotY, rotateX: rotX }}>
+        <div className="floor-shadow" />
+        <div className="rounded-[2rem] bg-surface p-5" style={Z(0)}>
+          <div className="grid grid-cols-[1fr_1.1fr] gap-4">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-white p-3 text-[8px] text-slate-600" style={{ ...Z(46), boxShadow: '14px 18px 30px rgb(0 0 0 / .25)' }}>
+              <b className="text-slate-900">FIRE SAFETY CERTIFICATE</b>
+              <div className="mt-2 space-y-1.5">{[88, 70, 80, 52, 76, 64, 84].map((w, k) => <div key={k} className="h-[3px] rounded bg-slate-200" style={{ width: `${w}%` }} />)}</div>
+              <motion.div className="absolute left-2 right-2 rounded border-2 border-brand" animate={{ opacity: active >= 2 ? 1 : 0 }} style={{ top: '58%', height: '8%' }} />
+              <div className="scanline" />
+              <div className="absolute bottom-2 left-3 text-slate-400">SYNTHETIC SAMPLE</div>
+            </div>
+            <ul className="space-y-1.5" style={Z(24)}>
+              {STAGE_DEFS.map(([id, name], k) => {
+                const Icon = STAGE_ICONS[k]
+                const done = k < i, cur = k === i
+                return (
+                  <li key={id} className={cn('flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition', cur ? 'neu-pressed text-brand' : 'bg-surface neu-sm', done && 'text-ok')}>
+                    <span className="grid h-5 w-5 place-items-center">{done ? <Check className="h-3.5 w-3.5" /> : <Icon className={cn('h-3.5 w-3.5', cur ? 'text-brand' : 'text-muted')} />}</span>
+                    <span className={cn(!done && !cur && 'text-muted')}>{name}</span>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
         </div>
-        <ul className="space-y-1.5">
-          {STAGE_DEFS.map(([id, name], k) => {
-            const Icon = STAGE_ICONS[k]
-            const done = k < i, cur = k === i
-            return (
-              <li key={id} className={cn('flex items-center gap-2 rounded-lg border px-2 py-1.5 text-xs transition', cur ? 'border-accent/60 bg-accent/10' : 'border-line', done && 'border-ok/30')}>
-                <span className={cn('grid h-5 w-5 place-items-center rounded-full', done ? 'bg-ok/20 text-ok' : cur ? 'bg-accent/20 text-accent' : 'bg-raised text-muted')}>
-                  {done ? <Check className="h-3 w-3" /> : <Icon className={cn('h-3 w-3', cur && 'animate-pulse')} />}
-                </span>
-                <span className={cn(done || cur ? 'text-fg' : 'text-muted')}>{name}</span>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-      <AnimatePresence mode="wait">
-        <motion.div key={i >= STAGE_DEFS.length ? 'done' : 'run'} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-          className="mt-3 rounded-lg bg-raised px-3 py-2 text-center text-xs font-semibold">
-          {i >= STAGE_DEFS.length ? <span className="text-warn">Findings ready — officer review required</span> : <span className="text-accent">Stage {active + 1}/8 · {STAGE_DEFS[active][1]}</span>}
-        </motion.div>
-      </AnimatePresence>
+        <AnimatePresence mode="wait">
+          <motion.div key={i >= STAGE_DEFS.length ? 'done' : 'run'} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+            className="absolute -bottom-5 left-1/2 w-max -translate-x-1/2 rounded-full bg-surface px-4 py-2 text-xs font-semibold" style={Z(90)}>
+            {i >= STAGE_DEFS.length ? <span className="text-warn">Findings ready — officer review required</span> : <span className="text-brand">Stage {active + 1}/8 · {STAGE_DEFS[active][1]}</span>}
+          </motion.div>
+        </AnimatePresence>
+      </motion.div>
     </div>
   )
 }
@@ -61,7 +73,7 @@ const FEATURES = [
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-aurora">
+    <div className="min-h-screen">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Logo className="text-lg" />
         <div className="flex items-center gap-2">
@@ -73,7 +85,7 @@ export default function Landing() {
 
       <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-16 pt-8 lg:grid-cols-2">
         <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
-          <p className="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-accent">Handbook in, evidence out, officer decides.</p>
+          <p className="mb-3 text-sm font-semibold text-brand">Handbook in, evidence out, officer decides.</p>
           <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">AI that checks.<br />Officers who decide.</h1>
           <p className="mt-4 max-w-xl text-lg text-muted">Evidence-led application scrutiny for trusted technical education approvals.</p>
           <div className="mt-7 flex flex-wrap gap-3">
@@ -91,7 +103,7 @@ export default function Landing() {
       <section className="mx-auto max-w-6xl px-4 pb-14">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map(([Icon, t, b]) => (
-            <div key={t} className="rounded-2xl border border-line bg-surface p-5">
+            <div key={t} className="rounded-3xl bg-surface p-5">
               <Icon className="mb-3 h-6 w-6 text-accent" /><div className="font-semibold">{t}</div><p className="mt-1 text-sm text-muted">{b}</p>
             </div>
           ))}
@@ -105,8 +117,8 @@ export default function Landing() {
           {STAGE_DEFS.map(([id, name, blurb], k) => {
             const Icon = STAGE_ICONS[k]
             return (
-              <li key={id} className="rounded-2xl border border-line bg-surface p-4">
-                <div className="flex items-center gap-2 text-xs font-semibold text-accent"><Icon className="h-4 w-4" />Stage {k + 1}</div>
+              <li key={id} className="rounded-3xl bg-surface p-4">
+                <div className="flex items-center gap-2 text-xs font-semibold text-brand"><Icon className="h-4 w-4" />Stage {k + 1}</div>
                 <div className="mt-1 font-semibold">{name}</div><p className="mt-1 text-xs text-muted">{blurb}</p>
               </li>
             )
@@ -116,7 +128,7 @@ export default function Landing() {
 
       <section id="workflow" className="mx-auto max-w-6xl scroll-mt-6 px-4 pb-14">
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-line bg-surface p-6">
+          <div className="rounded-3xl bg-surface p-6">
             <h2 className="text-xl font-bold">Human-in-the-loop principles</h2>
             <ol className="mt-3 space-y-2 text-sm">
               {['Institution submits the application', 'Uncertain extracted values need confirmation', 'Officers review findings and record decisions', 'Officers approve outbound notices', 'Senior recommendation only with no unresolved high-severity findings', 'Administrators approve rulesets before activation'].map((g, k) => (
@@ -125,7 +137,7 @@ export default function Landing() {
             </ol>
             <p className="mt-4 text-sm font-semibold text-accent">AI suggests. The authorized officer decides.</p>
           </div>
-          <div className="rounded-2xl border border-line bg-surface p-6">
+          <div className="rounded-3xl bg-surface p-6">
             <h2 className="text-xl font-bold">Trust and transparency</h2>
             <ul className="mt-3 space-y-2 text-sm text-muted">
               <li>• Source responses are labelled <b className="text-warn">SIMULATED SOURCE RESPONSE</b>. No government source is contacted.</li>

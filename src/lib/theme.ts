@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-const read = () => { try { return localStorage.getItem('pramaan.theme') !== 'light' } catch { return true } }
+const read = () => { try { return localStorage.getItem('pramaan.theme') === 'dark' } catch { return false } }
 
 export function useTheme() {
   const [dark, setDark] = useState(read)

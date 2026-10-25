@@ -38,9 +38,9 @@ export default function OfficerDashboard() {
           <h2 className="mb-2 font-semibold">Verification outcomes (documents)</h2>
           <div className="h-60" role="img" aria-label="Bar chart of document verification outcomes">
             <ResponsiveContainer><BarChart data={outcomes}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgb(36 54 96 / .6)" vertical={false} />
-              <XAxis dataKey="name" tick={{ fill: '#94a3c4', fontSize: 11 }} /><YAxis allowDecimals={false} tick={{ fill: '#94a3c4', fontSize: 11 }} />
-              <Tooltip cursor={{ fill: 'rgb(255 255 255 / .05)' }} contentStyle={{ background: 'rgb(12 24 52)', border: '1px solid rgb(36 54 96)', borderRadius: 12, color: '#e8eefa' }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgb(150 160 180 / .35)" vertical={false} />
+              <XAxis dataKey="name" tick={{ fill: '#6b7690', fontSize: 11 }} /><YAxis allowDecimals={false} tick={{ fill: '#6b7690', fontSize: 11 }} />
+              <Tooltip cursor={{ fill: 'rgb(255 255 255 / .05)' }} contentStyle={{ background: 'rgb(var(--surface))', border: 'none', boxShadow: 'var(--neu-out-sm)', borderRadius: 12, color: 'rgb(var(--fg))' }} />
               <Bar dataKey="value" radius={[6, 6, 0, 0]}>{outcomes.map((o) => <Cell key={o.key} fill={COLOR[o.key]} />)}</Bar>
             </BarChart></ResponsiveContainer>
           </div>

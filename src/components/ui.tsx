@@ -10,11 +10,11 @@ export const cn = (...a: (string | false | null | undefined)[]) => a.filter(Bool
 // ---------- Button ----------
 type BtnVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success'
 const BTN: Record<BtnVariant, string> = {
-  primary: 'bg-brand text-[rgb(var(--bg))] hover:brightness-110 font-semibold',
-  secondary: 'bg-raised text-fg border border-line hover:border-brand/60',
+  primary: 'bg-brand text-[rgb(var(--bg))] font-semibold [box-shadow:var(--neu-out-sm)] hover:brightness-110 active:[box-shadow:var(--neu-in)]',
+  secondary: 'bg-surface text-fg hover:text-brand active:[box-shadow:var(--neu-in)]',
   ghost: 'text-muted hover:text-fg hover:bg-raised',
-  danger: 'bg-bad/15 text-bad border border-bad/40 hover:bg-bad/25',
-  success: 'bg-ok/15 text-ok border border-ok/40 hover:bg-ok/25',
+  danger: 'bg-surface text-bad active:[box-shadow:var(--neu-in)]',
+  success: 'bg-surface text-ok active:[box-shadow:var(--neu-in)]',
 }
 export function Button({ variant = 'secondary', size = 'md', className, ...p }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: BtnVariant; size?: 'sm' | 'md' }) {
   return (
@@ -57,7 +57,7 @@ export const SimTag = ({ children = 'SIMULATED' }: { children?: ReactNode }) => 
 
 // ---------- Layout bits ----------
 export const Card = ({ className, children, ...p }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div {...p} className={cn('rounded-2xl border border-line bg-surface shadow-card', className)}>{children}</div>
+  <div {...p} className={cn('rounded-3xl border border-white/30 bg-surface dark:border-white/5', className)}>{children}</div>
 )
 export function PageHeader({ title, sub, actions }: { title: string; sub?: ReactNode; actions?: ReactNode }) {
   return (
@@ -70,8 +70,8 @@ export function PageHeader({ title, sub, actions }: { title: string; sub?: React
 const BAR: Record<Tone, string> = { green: 'bg-ok', amber: 'bg-warn', red: 'bg-bad', blue: 'bg-info', gray: 'bg-muted', cyan: 'bg-accent' }
 export function Stat({ label, value, hint, tone = 'blue', to }: { label: string; value: ReactNode; hint?: string; tone?: Tone; to?: string }) {
   const inner = (
-    <Card className="relative h-full overflow-hidden p-4 transition hover:border-brand/60">
-      <div className={cn('absolute inset-x-0 top-0 h-0.5', BAR[tone])} />
+    <Card className="lift relative h-full overflow-hidden p-4">
+      <div className={cn('absolute left-4 top-0 h-1 w-10 rounded-b-full', BAR[tone])} />
       <div className="text-xs font-medium uppercase tracking-wide text-muted">{label}</div>
       <div className="mt-1 text-3xl font-bold tabular-nums">{value}</div>
       {hint && <div className="mt-1 text-xs text-muted">{hint}</div>}
@@ -139,7 +139,7 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
           <motion.div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={id}
             initial={{ y: 16, scale: 0.97 }} animate={{ y: 0, scale: 1 }} exit={{ y: 8, opacity: 0 }}
             onMouseDown={(e) => e.stopPropagation()}
-            className={cn('max-h-[90vh] w-full overflow-auto rounded-2xl border border-line bg-surface p-5 shadow-card outline-none', wide ? 'max-w-3xl' : 'max-w-lg')}>
+            className={cn('max-h-[90vh] w-full overflow-auto rounded-2xl border border-line bg-surface p-5  outline-none', wide ? 'max-w-3xl' : 'max-w-lg')}>
             <div className="mb-3 flex items-start justify-between gap-3">
               <h2 id={id} className="text-lg font-bold">{title}</h2>
               <button onClick={onClose} aria-label="Close dialog" className="rounded-lg p-1 text-muted hover:bg-raised"><X className="h-4 w-4" /></button>
@@ -202,7 +202,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         <AnimatePresence>
           {items.map((t) => (
             <motion.div key={t.id} layout initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 40 }}
-              className={cn('pointer-events-auto flex gap-2 rounded-xl border bg-surface p-3 text-sm shadow-card', t.tone === 'ok' ? 'border-ok/50' : t.tone === 'bad' ? 'border-bad/50' : 'border-info/50')}>
+              className={cn('pointer-events-auto flex gap-2 rounded-xl border bg-surface p-3 text-sm ', t.tone === 'ok' ? 'border-ok/50' : t.tone === 'bad' ? 'border-bad/50' : 'border-info/50')}>
               {t.tone === 'ok' ? <CheckCircle2 className="h-4 w-4 shrink-0 text-ok" /> : t.tone === 'bad' ? <XCircle className="h-4 w-4 shrink-0 text-bad" /> : <Info className="h-4 w-4 shrink-0 text-info" />}
               <span>{t.text}</span>
             </motion.div>
@@ -229,4 +229,4 @@ export const Th = ({ children, className }: { children?: ReactNode; className?: 
   <th className={cn('whitespace-nowrap px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted', className)}>{children}</th>
 )
 export const Td = ({ children, className, ...p }: React.TdHTMLAttributes<HTMLTableCellElement>) => <td {...p} className={cn('px-3 py-2.5 align-middle', className)}>{children}</td>
-export const inputCls = 'w-full rounded-xl border border-line bg-bg px-3 py-2 text-sm placeholder:text-muted/70'
+export const inputCls = 'w-full rounded-xl bg-bg px-3 py-2 text-sm placeholder:text-muted/70'

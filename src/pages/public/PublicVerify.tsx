@@ -15,7 +15,7 @@ export default function PublicVerify() {
   const clean = (v: string) => v.trim().split('/').pop()!.toUpperCase()
   const proof = proofId ? s.proofs.find((p) => p.id === clean(proofId)) : undefined
   return (
-    <div className="min-h-screen bg-aurora">
+    <div className="min-h-screen">
       <header className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4"><Link to="/"><Logo className="text-lg" /></Link><ThemeToggle /></header>
       <main className="mx-auto max-w-3xl space-y-4 px-4 pb-16">
         <h1 className="text-3xl font-extrabold tracking-tight">Public proof verification</h1>

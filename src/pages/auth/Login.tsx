@@ -37,7 +37,7 @@ export default function Login() {
 
   const demoUsers = ['U-INST', 'U-OFF', 'U-SEN', 'U-ADM', 'U-AUD'].map((id) => s.users.find((u) => u.id === id)!).filter(Boolean)
   return (
-    <div className="min-h-screen bg-aurora">
+    <div className="min-h-screen">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"><Link to="/"><Logo className="text-lg" /></Link><ThemeToggle /></header>
       <main className="mx-auto max-w-5xl px-4 pb-16 pt-6">
         <h1 className="text-3xl font-extrabold tracking-tight">Choose a demo role</h1>
@@ -49,7 +49,7 @@ export default function Login() {
             const Icon = ICON[u.role]
             return (
               <motion.button key={u.id} onClick={() => signIn(u.id)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                className="group rounded-2xl border border-line bg-surface p-5 text-left transition hover:border-brand/70 hover:shadow-card focus-visible:border-brand">
+                className="group rounded-3xl bg-surface p-5 text-left lift">
                 <div className="flex items-center justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/15 text-brand"><Icon className="h-5 w-5" /></span>
                   <Badge tone={u.role === 'institution' ? 'blue' : 'cyan'}>{u.role === 'institution' ? 'Institution Portal' : 'Officer Console'}</Badge></div>
                 <div className="mt-3 font-semibold">{ROLE_LABEL[u.role]}</div>
