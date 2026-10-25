@@ -54,7 +54,7 @@ function HeroViz() {
         </div>
         <AnimatePresence mode="wait">
           <motion.div key={i >= STAGE_DEFS.length ? 'done' : 'run'} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-            className="absolute -bottom-5 left-1/2 w-max -translate-x-1/2 rounded-full bg-surface px-4 py-2 text-xs font-semibold" style={Z(90)}>
+            className="absolute -bottom-5 left-1/2 w-max max-w-[92%] -translate-x-1/2 text-center rounded-full bg-surface px-4 py-2 text-xs font-semibold" style={Z(90)}>
             {i >= STAGE_DEFS.length ? <span className="text-warn">Findings ready — officer review required</span> : <span className="text-brand">Stage {active + 1}/8 · {STAGE_DEFS[active][1]}</span>}
           </motion.div>
         </AnimatePresence>
@@ -72,7 +72,7 @@ const FEATURES = [
 
 export default function Landing() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-hidden">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Logo className="text-lg" />
         <div className="flex items-center gap-2">

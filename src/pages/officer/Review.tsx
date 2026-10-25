@@ -77,7 +77,7 @@ export default function Review() {
 
       <div className="mt-4 grid gap-4 xl:grid-cols-[22rem_1fr]">
         {/* LEFT: documents */}
-        <div className="space-y-3 xl:sticky xl:top-20 xl:self-start">
+        <div className="order-last space-y-3 xl:sticky xl:top-20 xl:order-none xl:self-start">
           <Card className="p-3">
             <h2 className="mb-2 text-sm font-semibold">Documents</h2>
             <ul className="space-y-1">

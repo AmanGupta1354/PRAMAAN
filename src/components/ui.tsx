@@ -106,7 +106,7 @@ export function Callout({ tone = 'blue', children, title }: { tone?: Tone; child
 }
 export function Tabs<T extends string>({ tabs, value, onChange, id = 'tabs' }: { tabs: { key: T; label: string; count?: number }[]; value: T; onChange: (k: T) => void; id?: string }) {
   return (
-    <div role="tablist" className="flex gap-1 overflow-x-auto border-b border-line">
+    <div role="tablist" className="no-scrollbar flex gap-1 overflow-x-auto border-b border-line">
       {tabs.map((t) => (
         <button key={t.key} role="tab" aria-selected={value === t.key} onClick={() => onChange(t.key)}
           className={cn('relative whitespace-nowrap px-3 py-2 text-sm font-medium transition', value === t.key ? 'text-fg' : 'text-muted hover:text-fg')}>

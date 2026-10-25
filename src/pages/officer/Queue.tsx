@@ -42,8 +42,8 @@ export default function Queue() {
   return (
     <>
       <PageHeader title="Work queue" sub="Submitted applications. Priority is an advisory score from open findings — officers decide what to review." />
-      <div className="mb-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-6">
-        <div className="relative lg:col-span-2"><Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" /><input aria-label="Search by application ID or institution" value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} placeholder="Search application ID or institution" className={`${inputCls} pl-9`} /></div>
+      <div className="mb-4 grid grid-cols-2 gap-2 lg:grid-cols-6">
+        <div className="relative col-span-2"><Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" /><input aria-label="Search by application ID or institution" value={q} onChange={(e) => { setQ(e.target.value); setPage(0) }} placeholder="Search application ID or institution" className={`${inputCls} pl-9`} /></div>
         <select aria-label="Application type" value={g('type')} onChange={(e) => set('type', e.target.value)} className={inputCls}><option value="">All types</option>{(Object.keys(APP_TYPE_LABEL) as AppType[]).map((t) => <option key={t} value={t}>{APP_TYPE_LABEL[t]}</option>)}</select>
         <select aria-label="State" value={g('state')} onChange={(e) => set('state', e.target.value)} className={inputCls}><option value="">All states</option>{states.map((x) => <option key={x}>{x}</option>)}</select>
         <select aria-label="Status" value={g('status')} onChange={(e) => set('status', e.target.value)} className={inputCls}><option value="">All statuses</option>{(Object.keys(APP_STATUS_LABEL) as AppStatus[]).filter((x) => x !== 'DRAFT').map((x) => <option key={x} value={x}>{APP_STATUS_LABEL[x]}</option>)}</select>
@@ -52,7 +52,18 @@ export default function Queue() {
         {(g('group') || params.size > 0) && <button className="text-left text-xs text-brand" onClick={() => { setParams({}); setQ('') }}>Clear filters</button>}
       </div>
       {rows.length === 0 ? <Empty title="No applications match these filters" action={<button className="text-sm text-brand" onClick={() => { setParams({}); setQ('') }}>Clear filters</button>} /> : (
-        <Card className="overflow-x-auto">
+        <>
+        <div className="space-y-3 md:hidden">
+          {view.map(({ a, inst, st }) => (
+            <button key={a.id} onClick={() => nav(`/officer/review/${a.id}`)} className="block w-full rounded-3xl bg-surface p-4 text-left">
+              <div className="flex items-center justify-between gap-2"><span className="font-mono text-xs font-semibold text-brand">{a.id}</span><AppBadge s={a.status} /></div>
+              <div className="mt-1 font-semibold">{inst.name}</div>
+              <div className="text-xs text-muted">{inst.city}, {inst.state} · {APP_TYPE_LABEL[a.type]} · {fmtDate(a.submittedAt)}</div>
+              <div className="mt-2 flex items-center gap-2 text-xs text-muted">{st.maxSev ? <SeverityBadge s={st.maxSev} /> : <span>No open findings</span>}{st.open} open · score {st.priority}</div>
+            </button>
+          ))}
+        </div>
+        <Card className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="border-b border-line"><tr><Th>Application</Th><Th>Institution</Th><Th>Type</Th>
               <Th><button className="inline-flex items-center gap-1" onClick={() => toggleSort('date')}>Submitted <ArrowDownUp className="h-3 w-3" /></button></Th>
@@ -73,6 +84,7 @@ export default function Queue() {
             <span className="flex items-center gap-2"><button disabled={page === 0} onClick={() => setPage(page - 1)} className="rounded-lg border border-line px-2 py-1 disabled:opacity-40">Prev</button>Page {page + 1}/{pages}<button disabled={page + 1 >= pages} onClick={() => setPage(page + 1)} className="rounded-lg border border-line px-2 py-1 disabled:opacity-40">Next</button></span>
           </div>
         </Card>
+        </>
       )}
     </>
   )

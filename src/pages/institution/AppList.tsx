@@ -28,7 +28,17 @@ export default function AppList() {
         </select>
       </div>
       {rows.length === 0 ? <Empty title="No applications match" body="Adjust the filters or create a new application." action={<LinkButton to="/institution/applications/new" variant="primary">New application</LinkButton>} /> : (
-        <Card className="overflow-x-auto">
+        <>
+        <div className="space-y-3 md:hidden">
+          {rows.map((a) => (
+            <Link key={a.id} to={`/institution/applications/${a.id}`} className="block rounded-3xl bg-surface p-4">
+              <div className="flex items-center justify-between gap-2"><span className="font-mono text-xs font-semibold text-brand">{a.id}</span><AppBadge s={a.status} /></div>
+              <div className="mt-1 font-semibold">{APP_TYPE_LABEL[a.type]}</div>
+              <div className="text-xs text-muted">Created {fmtDate(a.createdAt)} · {s.docs.filter((d) => d.appId === a.id).length} document(s)</div>
+            </Link>
+          ))}
+        </div>
+        <Card className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
             <thead className="border-b border-line"><tr><Th>Application</Th><Th>Type</Th><Th>Created</Th><Th>Documents</Th><Th>Status</Th></tr></thead>
             <tbody className="divide-y divide-line">
@@ -42,6 +52,7 @@ export default function AppList() {
             </tbody>
           </table>
         </Card>
+        </>
       )}
     </>
   )

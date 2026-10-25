@@ -60,3 +60,6 @@ body { @apply bg-bg text-fg font-sans antialiased; }
   .print-area { position: absolute; inset: 0; background: white; color: black; box-shadow: none; }
   .no-print { display: none !important; }
 }
+
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

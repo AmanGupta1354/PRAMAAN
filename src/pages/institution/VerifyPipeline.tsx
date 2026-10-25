@@ -123,11 +123,11 @@ export default function VerifyPipeline() {
 
       <div className="grid gap-4 xl:grid-cols-[16rem_1fr_20rem]">
         <Card className="p-3">
-          <ol className="space-y-1">
+          <ol className="no-scrollbar flex gap-2 overflow-x-auto pb-1 xl:block xl:space-y-1 xl:gap-0 xl:overflow-visible xl:pb-0">
             {plan.stages.map((st, i) => {
               const state = stageState(i); const tone = stageTone(i)
               return (
-                <li key={st.id}>
+                <li key={st.id} className="w-44 shrink-0 xl:w-auto">
                   <button onClick={() => setView(i === stage && !finished ? null : i)} disabled={!started || (i > stage && !finished)}
                     className={cn('flex w-full items-center gap-2 rounded-xl px-2 py-2 text-left text-sm transition disabled:opacity-50', shown === i && started ? 'neu-pressed' : 'hover:text-brand')}>
                     <span className={cn('relative grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold',
