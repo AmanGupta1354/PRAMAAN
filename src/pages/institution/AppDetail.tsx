@@ -9,9 +9,11 @@ import { AppBadge, Button, Callout, Card, CheckBadge, Confirm, Empty, inputCls, 
 import { UploadWorkspace } from '../../components/UploadWorkspace'
 import { FindingCard } from '../../components/FindingCard'
 import { VersionCompare } from '../../components/VersionCompare'
+import { ExplanationPanel } from '../../components/Explanation'
+import { PhotoEnhance } from '../../components/PhotoEnhance'
 import { downloadReport } from '../../lib/report'
 
-type Tab = 'overview' | 'documents' | 'findings' | 'rectification' | 'timeline'
+type Tab = 'overview' | 'explanation' | 'documents' | 'findings' | 'rectification' | 'timeline'
 
 export default function AppDetail() {
   const { id } = useParams()
@@ -73,7 +75,7 @@ export default function AppDetail() {
         </>} />
 
       <Tabs id="appdetail" value={tab} onChange={setTab} tabs={[
-        { key: 'overview', label: 'Overview' }, { key: 'documents', label: 'Documents', count: docs.length },
+        { key: 'overview', label: 'Overview' }, { key: 'explanation', label: 'Decision explained' }, { key: 'documents', label: 'Documents', count: docs.length },
         { key: 'findings', label: 'Findings', count: findings.length }, { key: 'rectification', label: 'Rectification', count: needsFix.length || undefined },
         { key: 'timeline', label: 'Timeline' }]} />
 
@@ -115,7 +117,9 @@ export default function AppDetail() {
           </div>
         )}
 
-        {tab === 'documents' && <UploadWorkspace app={app} editable={app.status === 'DRAFT'} />}
+        {tab === 'explanation' && (app.verifiedOnce ? <ExplanationPanel app={app} /> : <Empty title="No explanation yet" body="The explanation appears once verification has completed." />)}
+
+        {tab === 'documents' && <div className="space-y-6"><UploadWorkspace app={app} editable={app.status === 'DRAFT'} /><div><h2 className="mb-2 font-semibold">Lab and classroom photo enhancement</h2><PhotoEnhance /></div></div>}
 
         {tab === 'findings' && (
           findings.length === 0 ? <Empty icon={<ShieldCheck className="h-8 w-8" />} title="No findings yet" body="Findings appear after the verification pipeline completes." /> : (

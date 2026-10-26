@@ -51,6 +51,12 @@ AI suggests. The authorized officer decides. Nothing is ever approved or rejecte
 
 A proof slip records document-check statuses, simulated strengths, ruleset version, issue time and an audit reference. A SHA-256 **integrity digest** of the record is shown — it detects edits to the stored record in this browser but is **not a cryptographic signature**. Records live in `localStorage`, so a QR link verifies only in the browser that generated it. Every slip reads "Prototype proof slip — not an official AICTE approval."
 
+## Explainable decisions, enhancement and SDGs
+
+- **Officer queue** shows each submission with only its AI-suggested outcome: **Accept** or **Reject** (or "Verifying"). Opening an institution lands on the **AI explanation**: a plain-language paragraph, point-by-point reasons (why rejected / why accepted), an error summary grouped by category, a score breakdown, and the UN SDGs the review supports. **Generate report** downloads the full report including this explanation. Institutions see the same explanation on their application ("Decision explained").
+- **Lab and classroom photo enhancement** (Infrastructure tab and the institution's Documents tab): in-browser auto-contrast, brightness correction, sharpening and upscaling, with a before/after slider and measured brightness/contrast/sharpness.
+- **SDG alignment** (landing page, explanation panel, report): SDG 4 Quality Education, SDG 9 Industry, Innovation and Infrastructure, SDG 16 Strong Institutions.
+
 ## Real checks you can demonstrate
 
 - **Evaluation** (Admin → Evaluation): runs the in-browser analysis over seven labelled documents in `public/samples` (six PDFs + one scanned PNG, ground truth in `manifest.json`) and reports field-extraction accuracy, hidden-text and edit-detection precision/recall and average time. Regenerate the PDFs with `node scripts/make-samples.cjs`.
@@ -73,17 +79,19 @@ npm run preview    # serve the production build
 
 Requires Node 18+. No Python, database or environment variables.
 
-## Demo accounts (display-only, no passwords)
+## Signing in
 
-| Role | Email | Area |
-| --- | --- | --- |
-| Institution Representative | demo.institution@pramaan.demo | Institution Portal (`/institution`) |
-| Scrutiny Officer | demo.officer@pramaan.demo | Officer Console (`/officer`) |
-| Senior Officer | demo.senior@pramaan.demo | Officer Console |
-| Administrator | demo.admin@pramaan.demo | Officer Console + Administration |
-| Auditor | demo.auditor@pramaan.demo | Read-only queue and audit log |
+PRAMAAN opens with an email + password sign-in. Your account decides your workspace (institution portal vs. AICTE console) — there is no role picker. Credentials are display-only demo accounts; the shared demo password is shown under **Demo credentials** on the sign-in page and is stored only as a salted SHA-256 hash in the seed data.
 
-Switch accounts any time from the top-right user menu.
+| Role | Email |
+| --- | --- |
+| Institution Representative | demo.institution@pramaan.demo |
+| Scrutiny Officer | demo.officer@pramaan.demo |
+| Senior Officer | demo.senior@pramaan.demo |
+| Administrator | demo.admin@pramaan.demo |
+| Auditor | demo.auditor@pramaan.demo |
+
+To switch roles, log out (top-right menu) and sign in with another account. Frontend sign-in is a demonstration, not production authentication.
 
 ## Demo script (≈5 minutes)
 

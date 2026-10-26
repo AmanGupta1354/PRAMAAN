@@ -3,14 +3,14 @@ import type {
   AppType, Application, CheckStatus, DemoState, DocRecord, Finding, FindingStatus, Notice, Notification,
   ProofSlip, Requirement, Role, Ruleset,
 } from '../types'
-import { buildSeed, STATE_VERSION } from '../data/seed'
+import { buildSeed, passHashFor, STATE_VERSION } from '../data/seed'
 import { makeEntry, verifyChain } from './audit'
 import { buildExtractions, buildFinding, pickDoc, scenarioFor, TEMPLATES } from './findingTemplates'
 import { realFlags, type DeepAnalysis } from './deepAnalyze'
 import { sha256 } from './hash'
 import { APP_TYPE_LABEL, daysUntil } from './format'
 
-const KEY = 'pramaan.demo.v5'
+const KEY = 'pramaan.demo.v6'
 export type Result<T = undefined> = { ok: true; data: T } | { ok: false; error: string }
 const ok = <T,>(data?: T): Result<T> => ({ ok: true, data: data as T })
 const fail = (error: string): Result<never> => ({ ok: false, error })
@@ -68,6 +68,14 @@ const isUnresolved = (f: Finding) => f.status !== 'DISMISSED' && f.status !== 'R
 
 // ---------- session ----------
 export const actions = {
+  signIn(email: string, password: string): Result<Role> {
+    const u = state.users.find((x) => x.email.toLowerCase() === email.trim().toLowerCase())
+    if (!u || u.passHash !== passHashFor(u.id, password)) return fail('Incorrect email or password.')
+    if (!u.active) return fail('This account is deactivated. Contact your administrator.')
+    const s = clone(); s.session = { role: u.role, userId: u.id }
+    audit(s, 'LOGIN', u.email, 'Signed in')
+    commit(s); return ok(u.role)
+  },
   login(userId: string): Result<Role> {
     const u = state.users.find((x) => x.id === userId)
     if (!u) return fail('Unknown demo account')

@@ -7,7 +7,9 @@ import { buildExtractions, buildFinding, pickDoc, TEMPLATES } from '../lib/findi
 import { makeEntry } from '../lib/audit'
 import { sha256 } from '../lib/hash'
 
-export const STATE_VERSION = 5
+export const STATE_VERSION = 6
+export const DEMO_PASSWORD = 'Pramaan@2026'
+export const passHashFor = (userId: string, pw: string) => sha256(`${userId}:${pw}`)
 const DAY = 86400000
 const ago = (days: number, hours = 0) => new Date(Date.now() - days * DAY - hours * 3600000).toISOString()
 const ahead = (days: number) => new Date(Date.now() + days * DAY).toISOString()
@@ -76,7 +78,7 @@ const SOURCES: SourceAdapter[] = [
   { id: 'SRC-GST', name: 'GSTN', kind: 'Invoice / vendor GST', status: 'UNAVAILABLE', strength: null, note: 'Not configured. Always returns UNAVAILABLE.' },
 ]
 
-const USERS: DemoUser[] = [
+const USER_ROWS: Omit<DemoUser, 'passHash'>[] = [
   { id: 'U-INST', name: 'Meera Kulkarni', email: 'demo.institution@pramaan.demo', role: 'institution', active: true, instId: 'INST-001' },
   { id: 'U-OFF', name: 'Rohan Deshpande', email: 'demo.officer@pramaan.demo', role: 'scrutiny', active: true },
   { id: 'U-SEN', name: 'Dr. Kavita Rao', email: 'demo.senior@pramaan.demo', role: 'senior', active: true },
@@ -85,6 +87,7 @@ const USERS: DemoUser[] = [
   { id: 'U-OFF2', name: 'Pradeep Nair', email: 'officer.two@pramaan.demo', role: 'scrutiny', active: true },
   { id: 'U-INST2', name: 'Sunita Verma', email: 'rep.sarvodaya@pramaan.demo', role: 'institution', active: false, instId: 'INST-002' },
 ]
+const USERS: DemoUser[] = USER_ROWS.map((u) => ({ ...u, passHash: passHashFor(u.id, DEMO_PASSWORD) }))
 
 function buildFaculty(): FacultyRecord[] {
   const rows: [string, number, string, string, number, string][] = [

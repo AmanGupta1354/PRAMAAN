@@ -88,7 +88,7 @@ export interface Ruleset {
 }
 
 export interface DemoUser {
-  id: string; name: string; email: string; role: Role; active: boolean; instId?: string
+  id: string; name: string; email: string; role: Role; active: boolean; instId?: string; passHash: string
 }
 
 export interface SourceAdapter {

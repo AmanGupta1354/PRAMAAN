@@ -129,13 +129,6 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
     </nav>
   )
 
-  const switchTo = (id: string) => {
-    const r = actions.login(id)
-    if (!r.ok) { toast('bad', r.error); return }
-    toast('info', `Switched demo account (${ROLE_LABEL[r.data]}).`)
-    nav(roleHome(r.data))
-  }
-
   return (
     <div className={cn('min-h-screen', area === 'officer' && 'officer-theme')}>
       <div className="flex">
@@ -172,14 +165,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
                 {menu && (
                   <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} role="menu"
                     className="absolute right-0 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 ">
-                    <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted">Switch demo account</div>
-                    {s.users.filter((u) => u.active).map((u) => (
-                      <button key={u.id} role="menuitem" onClick={() => switchTo(u.id)}
-                        className={cn('flex w-full flex-col rounded-xl px-2 py-1.5 text-left text-xs hover:bg-raised', u.id === user?.id && 'bg-brand/10')}>
-                        <span className="font-semibold">{u.name} <span className="font-normal text-muted">· {ROLE_LABEL[u.role]}</span></span>
-                        <span className="text-muted">{u.email}</span>
-                      </button>
-                    ))}
+                    <div className="px-2 py-1.5 text-xs"><div className="font-semibold">{user?.name}</div><div className="text-muted">{role && ROLE_LABEL[role]}</div><div className="font-mono text-[11px] text-muted">{user?.email}</div></div>
                     <hr className="my-1 border-line" />
                     <button onClick={() => { setMenu(false); setConfirmOut(true) }} role="menuitem" className="flex w-full items-center gap-2 rounded-xl px-2 py-1.5 text-xs text-bad hover:bg-bad/10"><LogOut className="h-3.5 w-3.5" /> Log out</button>
                   </motion.div>

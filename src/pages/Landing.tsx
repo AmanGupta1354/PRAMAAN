@@ -7,6 +7,7 @@ import {
 import { Logo, ThemeToggle } from '../components/Shell'
 import { cn, LinkButton } from '../components/ui'
 import { STAGE_DEFS } from '../lib/verificationPlan'
+import { SDGS } from '../lib/sdg'
 
 const STAGE_ICONS = [FileSearch, ScanLine, Cpu, ScrollText, Fingerprint, Network, Users2, ShieldCheck]
 
@@ -87,8 +88,8 @@ export default function Landing() {
           <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">AI that checks.<br />Officers who decide.</h1>
           <p className="mt-4 max-w-xl text-lg text-muted">Evidence-led application scrutiny for trusted technical education approvals.</p>
           <div className="mt-7 flex flex-wrap gap-3">
-            <LinkButton to="/login?as=institution" variant="primary" className="px-5 py-2.5">Explore Institution Portal <ArrowRight className="h-4 w-4" /></LinkButton>
-            <LinkButton to="/login?as=scrutiny" className="px-5 py-2.5">Open AICTE Console</LinkButton>
+            <LinkButton to="/login" variant="primary" className="px-5 py-2.5">Explore Institution Portal <ArrowRight className="h-4 w-4" /></LinkButton>
+            <LinkButton to="/login" className="px-5 py-2.5">Open AICTE Console</LinkButton>
             <a href="#workflow" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted hover:text-fg"><PlayCircle className="h-4 w-4" /> View Demo Workflow</a>
           </div>
           <p className="mt-6 max-w-xl rounded-xl border border-line bg-surface/60 p-3 text-xs text-muted">
@@ -103,6 +104,20 @@ export default function Landing() {
           {FEATURES.map(([Icon, t, b]) => (
             <div key={t} className="rounded-3xl bg-surface p-5">
               <Icon className="mb-3 h-6 w-6 text-accent" /><div className="font-semibold">{t}</div><p className="mt-1 text-sm text-muted">{b}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <h2 className="text-2xl font-bold">Built for the UN Sustainable Development Goals</h2>
+        <p className="mt-1 text-sm text-muted">Fair, transparent approval of technical institutions supports quality education, resilient infrastructure and accountable institutions.</p>
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          {SDGS.map((g) => (
+            <div key={g.goal} className="rounded-3xl bg-surface p-5">
+              <div className="flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-xl text-lg font-extrabold text-white" style={{ background: '#' + g.color }}>{g.goal}</span><div className="font-semibold leading-tight">{g.name}</div></div>
+              <p className="mt-3 text-sm text-muted">{g.how}</p>
+              <div className="mt-2 text-xs text-muted">Targets {g.targets.map((t) => t.id).join(' · ')}</div>
             </div>
           ))}
         </div>

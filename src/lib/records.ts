@@ -16,7 +16,7 @@ export interface InstRecord {
 /** Deterministic fictional "AICTE system" record for an institution. Not real data. */
 export function institutionRecord(inst: Institution, fireExpiry?: string): InstRecord {
   const h = seedNum(inst.id)
-  const base = 120 + (h % 3) * 60
+  const base = h % 6 === 0 ? 240 : 180
   return {
     prevEoa: { year: '2025-26', status: h % 5 === 0 ? 'Granted with conditions' : 'Granted' },
     approved: [{ programme: 'B.E. Computer Engineering', intake: base }, { programme: 'B.E. Mechanical Engineering', intake: 60 }],
@@ -39,7 +39,7 @@ export function recordChecks(s: DemoState, app: Application): RecRow[] {
   const rec = institutionRecord(inst, fire?.expiresOn)
   const intakeVal = s.extracted.find((e) => e.appId === app.id && e.field === 'Student intake')
   const applied = intakeVal ? Number(intakeVal.value.replace(/,/g, '')) : undefined
-  const approvedTotal = rec.approved.reduce((n, a) => n + a.intake, 0)
+  const approvedTotal = rec.approved.reduce((n, a) => n + a.intake, 0) - (app.type === 'INTAKE' ? 60 : 0)
   const rows: RecRow[] = []
   rows.push({ label: 'Previous EoA', application: app.type === 'NEW' ? 'New institution' : 'Continuation claimed', record: `${rec.prevEoa.year}: ${rec.prevEoa.status}`, status: app.type === 'NEW' ? 'PENDING' : rec.prevEoa.status === 'Granted' ? 'VERIFIED' : 'MANUAL_REQUIRED', note: app.type === 'NEW' ? 'No prior approval expected.' : rec.prevEoa.status === 'Granted' ? 'Matches record.' : 'Conditions attached to previous approval; review.' })
   if (applied !== undefined) {

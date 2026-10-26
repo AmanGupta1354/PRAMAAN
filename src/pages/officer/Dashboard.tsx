@@ -28,10 +28,10 @@ export default function OfficerDashboard() {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         <Stat label="Awaiting review" value={<AnimatedNumber value={awaiting.length} />} tone="amber" to="/officer/queue?group=review" />
         <Stat label="Processing" value={<AnimatedNumber value={processing.length} />} tone="cyan" to="/officer/queue?group=processing" />
-        <Stat label="Open high severity" value={<AnimatedNumber value={highOpen.length} />} tone="red" to="/officer/queue?severity=HIGH" />
+        <Stat label="Open high severity" value={<AnimatedNumber value={highOpen.length} />} tone="red" to="/officer/queue?outcome=REJECT" />
         <Stat label="Manual verification" value={<AnimatedNumber value={manual.length} />} hint="documents" tone="amber" />
         <Stat label="Expiring ≤ 60d" value={<AnimatedNumber value={expiring.length} />} hint="certificates" tone="red" />
-        <Stat label="Recommended" value={<AnimatedNumber value={reviewed.length} />} tone="green" to="/officer/queue?status=RECOMMENDATION_RECORDED" />
+        <Stat label="Recommended" value={<AnimatedNumber value={reviewed.length} />} tone="green" to="/officer/queue?outcome=ACCEPT" />
       </div>
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
         <Card className="p-4 lg:col-span-2">

@@ -94,6 +94,15 @@ Legend: ✅ covered · 🟡 covered as a labelled simulation / partial · ❌ no
 
 ---
 
+## 5b. Mentor feedback addressed
+
+| Feedback | Status |
+| --- | --- |
+| Image enhancement for lab / classroom infrastructure | ✅ In-browser enhancement with before/after and measured gains |
+| Explainable AI for why an application was rejected, with error summary | ✅ AI explanation panel (paragraph + points + error summary + score factors) and report |
+| Login-first access, officer sees accept / reject | ✅ Email + password sign-in; officer queue shows accept / reject |
+| SDG alignment | ✅ SDG 4, 9 and 16 shown on landing, explanation and report |
+
 ## 6. Known gaps worth closing (suggested order)
 
 1. ~~Infrastructure evidence module~~ (done — simulated image check, real threshold comparison) — — a tab where labs/classrooms/library photos and floor plans are checked against configurable minimums (area per student, lab count), with a clearly labelled simulated image-quality/room-detection result and an "inspection recommended" flag.

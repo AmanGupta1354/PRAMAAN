@@ -1,64 +1,60 @@
-import { useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Building2, ClipboardCheck, Eye, ScanSearch, Settings } from 'lucide-react'
+import { Eye, EyeOff, LogIn } from 'lucide-react'
 import { actions, useStore } from '../../lib/store'
 import { ROLE_LABEL } from '../../lib/format'
+import { DEMO_PASSWORD } from '../../data/seed'
 import { Logo, roleHome, ThemeToggle } from '../../components/Shell'
-import { Badge, Callout, useToast } from '../../components/ui'
-import type { Role } from '../../types'
-
-const ICON: Record<Role, typeof Building2> = { institution: Building2, scrutiny: ScanSearch, senior: ClipboardCheck, admin: Settings, auditor: Eye }
-const BLURB: Record<Role, string> = {
-  institution: 'Create applications, upload documents, watch verification, rectify.',
-  scrutiny: 'Review findings with evidence, accept or dismiss, approve notices.',
-  senior: 'Record recommendations — blocked while high-severity findings remain.',
-  admin: 'Manage rulesets (draft → preview → approve → activate), users, demo data.',
-  auditor: 'Read-only access to the work queue and the hash-chained audit log.',
-}
+import { Button, inputCls } from '../../components/ui'
 
 export default function Login() {
   const s = useStore()
   const nav = useNavigate()
-  const toast = useToast()
   const [params] = useSearchParams()
   const next = params.get('next')
-  const as = params.get('as') as Role | null
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [show, setShow] = useState(false)
+  const [error, setError] = useState('')
 
-  const signIn = (id: string) => {
-    const r = actions.login(id)
-    if (!r.ok) { toast('bad', r.error); return }
-    nav(next && next.startsWith('/') ? next : roleHome(r.data))
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email.trim() || !password) { setError('Enter your email and password.'); return }
+    const r = actions.signIn(email, password)
+    if (!r.ok) { setError(r.error); return }
+    nav(next && next.startsWith('/') && !next.startsWith('//') ? next : roleHome(r.data))
   }
-  useEffect(() => {
-    if (as) { const u = s.users.find((x) => x.role === as && x.active); if (u && !s.session) signIn(u.id) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
-  const demoUsers = ['U-INST', 'U-OFF', 'U-SEN', 'U-ADM', 'U-AUD'].map((id) => s.users.find((u) => u.id === id)!).filter(Boolean)
+  const accounts = s.users.filter((u) => u.active)
   return (
     <div className="min-h-screen">
       <header className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4"><Link to="/"><Logo className="text-lg" /></Link><ThemeToggle /></header>
-      <main className="mx-auto max-w-5xl px-4 pb-16 pt-6">
-        <h1 className="text-3xl font-extrabold tracking-tight">Choose a demo role</h1>
-        <p className="mt-1 text-muted">Select a role to continue.</p>
-        {s.session && <p className="mt-3 text-sm text-muted">Currently signed in as <b className="text-fg">{ROLE_LABEL[s.session.role]}</b>. Choosing another account switches role.</p>}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {demoUsers.map((u, i) => {
-            const Icon = ICON[u.role]
-            return (
-              <motion.button key={u.id} onClick={() => signIn(u.id)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                className="group rounded-3xl bg-surface p-5 text-left lift">
-                <div className="flex items-center justify-between"><span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/15 text-brand"><Icon className="h-5 w-5" /></span>
-                  <Badge tone={u.role === 'institution' ? 'blue' : 'cyan'}>{u.role === 'institution' ? 'Institution Portal' : 'Officer Console'}</Badge></div>
-                <div className="mt-3 font-semibold">{ROLE_LABEL[u.role]}</div>
-                <div className="text-sm">{u.name}</div>
-                <div className="font-mono text-xs text-muted">{u.email}</div>
-                <p className="mt-2 text-xs text-muted">{BLURB[u.role]}</p>
-              </motion.button>
-            )
-          })}
-        </div>
+      <main className="mx-auto grid max-w-5xl items-start gap-8 px-4 pb-16 pt-6 lg:grid-cols-[1fr_24rem]">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+          <h1 className="text-4xl font-extrabold tracking-tight">Sign in to PRAMAAN</h1>
+          <p className="mt-2 max-w-md text-muted">Your account decides what you see: institutions get the application portal, AICTE officials get the scrutiny console.</p>
+          <details className="mt-8 max-w-md rounded-3xl bg-surface p-4 text-sm">
+            <summary className="cursor-pointer font-semibold">Demo credentials</summary>
+            <p className="mt-2 text-xs text-muted">Shared password for every account: <span className="font-mono text-fg">{DEMO_PASSWORD}</span></p>
+            <ul className="mt-2 space-y-1.5 text-xs">
+              {accounts.map((u) => <li key={u.id} className="flex justify-between gap-3"><span className="font-mono">{u.email}</span><span className="text-muted">{ROLE_LABEL[u.role]}</span></li>)}
+            </ul>
+          </details>
+        </motion.div>
+        <motion.form onSubmit={submit} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="space-y-4 rounded-3xl bg-surface p-6" noValidate>
+          <label className="block text-sm font-semibold">Email
+            <input type="email" autoComplete="username" value={email} onChange={(e) => { setEmail(e.target.value); setError('') }} className={`${inputCls} mt-1`} placeholder="you@institution.org" />
+          </label>
+          <label className="block text-sm font-semibold">Password
+            <span className="relative mt-1 block">
+              <input type={show ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={(e) => { setPassword(e.target.value); setError('') }} className={`${inputCls} pr-10`} />
+              <button type="button" onClick={() => setShow((v) => !v)} aria-label={show ? 'Hide password' : 'Show password'} className="absolute right-2 top-2 text-muted hover:text-fg">{show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button>
+            </span>
+          </label>
+          {error && <div role="alert" className="rounded-xl bg-bad/10 p-2.5 text-sm text-bad">{error}</div>}
+          <Button type="submit" variant="primary" className="w-full py-2.5"><LogIn className="h-4 w-4" /> Sign in</Button>
+        </motion.form>
       </main>
     </div>
   )
