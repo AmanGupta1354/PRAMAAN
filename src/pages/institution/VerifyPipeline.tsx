@@ -134,7 +134,7 @@ export default function VerifyPipeline() {
       </Card>
 
       <div className="grid gap-4 xl:grid-cols-[16rem_1fr_20rem]">
-        <Card className="p-3">
+        <Card className="min-w-0 p-3">
           <ol className="no-scrollbar flex gap-2 overflow-x-auto pb-1 xl:block xl:space-y-1 xl:gap-0 xl:overflow-visible xl:pb-0">
             {plan.stages.map((st, i) => {
               const state = stageState(i); const tone = stageTone(i)
@@ -203,7 +203,7 @@ export default function VerifyPipeline() {
           )}
         </div>
 
-        <Card className="flex max-h-[34rem] flex-col p-3">
+        <Card className="flex min-w-0 max-h-[34rem] flex-col p-3">
           <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold">Activity feed {running && <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />}</h2>
           <ul className="flex-1 space-y-1.5 overflow-y-auto text-xs" aria-live="polite">
             {feed.length === 0 && <li className="text-muted">Events appear here as checks execute.</li>}

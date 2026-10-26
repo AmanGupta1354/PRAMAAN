@@ -49,7 +49,7 @@ export default function Queue() {
       <div className="mb-4 flex flex-wrap gap-2 text-sm">
         {(['', 'REJECT', 'ACCEPT'] as const).map((o) => (
           <button key={o} onClick={() => set('outcome', o)} className={`rounded-full px-4 py-1.5 font-semibold ${g('outcome') === o ? 'neu-pressed text-brand' : 'bg-surface text-muted neu-sm'}`}>
-            {o === '' ? `All (${rows.length === s.apps.filter((a) => a.status !== 'DRAFT').length ? rows.length : '…'})` : o === 'REJECT' ? `Reject (${count('REJECT')})` : `Accept (${count('ACCEPT')})`}
+            {o === '' ? `All (${s.apps.filter((a) => a.status !== 'DRAFT').length})` : o === 'REJECT' ? `Reject (${count('REJECT')})` : `Accept (${count('ACCEPT')})`}
           </button>
         ))}
       </div>

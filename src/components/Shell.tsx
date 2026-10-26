@@ -204,7 +204,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
           </motion.div>
         )}
       </AnimatePresence>
-      <Confirm open={confirmOut} onClose={() => setConfirmOut(false)} title="Log out of demo?" confirmLabel="Log out" body="Your demo data stays in this browser. You can sign back in with any demo account."
+      <Confirm open={confirmOut} onClose={() => setConfirmOut(false)} title="Log out?" confirmLabel="Log out" body="You will return to the home page. You can sign back in at any time."
         onConfirm={() => { actions.logout(); nav('/') }} />
     </div>
   )
