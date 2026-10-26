@@ -106,6 +106,12 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
   const items = area === 'institution' ? INST_NAV : OFF_NAV
   const unread = s.notifications.filter((n) => !n.read && n.instId === user?.instId).length
 
+  const home = role ? roleHome(role) : '/'
+  const LogoutBtn = (
+    <button onClick={() => { setMobile(false); setConfirmOut(true) }} title="Log out" className={cn('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-bad transition hover:bg-bad/10', collapsed && 'justify-center')}>
+      <LogOut className="h-4 w-4" />{!collapsed && <span>Log out</span>}
+    </button>
+  )
   const NavList = (
     <nav className="flex flex-col gap-1 p-2" aria-label="Main">
       {items.filter((i) => !i.roles || (role && i.roles.includes(role))).map((i) => (
@@ -134,12 +140,13 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
       <div className="flex">
         <aside className={cn('no-print sticky top-3 m-3 hidden h-[calc(100vh-1.5rem)] shrink-0 flex-col rounded-3xl bg-surface md:flex', collapsed ? 'w-16' : 'w-60')}>
           <div className="flex h-14 items-center justify-between border-b border-line px-3">
-            {!collapsed && <Logo />}
+            {!collapsed && <Link to={home} aria-label="Go to dashboard" className="rounded-lg"><Logo /></Link>}
             <button onClick={() => setCollapsed((c) => !c)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} className="rounded-lg p-1.5 text-muted hover:bg-raised">
               {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
             </button>
           </div>
           <div className="flex-1 overflow-y-auto">{NavList}</div>
+          <div className="border-t border-line p-2">{LogoutBtn}</div>
           {!collapsed && (
             <div className="border-t border-line p-3 text-[11px] text-muted">
               <ShieldCheck className="mb-1 inline h-3.5 w-3.5 text-accent" /> AI suggests. The authorized officer decides.
@@ -150,7 +157,7 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="no-print sticky top-3 z-30 mx-3 mt-3 flex h-14 items-center gap-3 rounded-2xl bg-surface px-3 sm:px-5">
             <button onClick={() => setMobile(true)} aria-label="Open menu" className="rounded-lg p-2 text-muted hover:bg-raised md:hidden"><Menu className="h-5 w-5" /></button>
-            <Link to="/" className="md:hidden"><Logo /></Link>
+            <Link to={home} aria-label="Go to dashboard" className="md:hidden"><Logo /></Link>
             <Crumbs />
             <span className={cn('ml-auto hidden rounded-full border px-2 py-0.5 text-[11px] font-semibold lg:inline', area === 'officer' ? 'border-accent/40 text-accent' : 'border-info/40 text-info')}>
               {area === 'officer' ? 'AICTE Officer Console' : 'Institution Portal'}
@@ -189,9 +196,10 @@ export function Shell({ area }: { area: 'institution' | 'officer' }) {
           <motion.div className="fixed inset-0 z-50 md:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <div className="absolute inset-0 bg-black/60" onClick={() => setMobile(false)} />
             <motion.aside initial={{ x: -280 }} animate={{ x: 0 }} exit={{ x: -280 }} className="relative h-full w-72 max-w-[85vw] overflow-y-auto border-r border-line bg-surface">
-              <div className="flex h-14 items-center justify-between border-b border-line px-3"><Logo />
+              <div className="flex h-14 items-center justify-between border-b border-line px-3"><Link to={home} aria-label="Go to dashboard"><Logo /></Link>
                 <button onClick={() => setMobile(false)} aria-label="Close menu" className="rounded-lg p-2 text-muted hover:bg-raised"><X className="h-5 w-5" /></button></div>
               {NavList}
+              <div className="border-t border-line p-2">{LogoutBtn}</div>
             </motion.aside>
           </motion.div>
         )}
