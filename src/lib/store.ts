@@ -3,7 +3,7 @@ import type {
   AppType, Application, CheckStatus, DemoState, DocRecord, Finding, FindingStatus, Notice, Notification,
   ProofSlip, Requirement, Role, Ruleset,
 } from '../types'
-import { buildSeed, passHashFor, STATE_VERSION } from '../data/seed'
+import { buildSeed, DEMO_PASSWORD, passHashFor, STATE_VERSION } from '../data/seed'
 import { makeEntry, verifyChain } from './audit'
 import { buildExtractions, buildFinding, pickDoc, scenarioFor, TEMPLATES } from './findingTemplates'
 import { realFlags, type DeepAnalysis } from './deepAnalyze'
@@ -70,7 +70,8 @@ const isUnresolved = (f: Finding) => f.status !== 'DISMISSED' && f.status !== 'R
 export const actions = {
   signIn(email: string, password: string): Result<Role> {
     const u = state.users.find((x) => x.email.toLowerCase() === email.trim().toLowerCase())
-    if (!u || u.passHash !== passHashFor(u.id, password)) return fail('Incorrect email or password.')
+    // Compare against the seed credential, not the stored hash, so stale browser data can never lock an account out.
+    if (!u || passHashFor(u.id, password) !== passHashFor(u.id, DEMO_PASSWORD)) return fail('Incorrect email or password.')
     if (!u.active) return fail('This account is deactivated. Contact your administrator.')
     const s = clone(); s.session = { role: u.role, userId: u.id }
     audit(s, 'LOGIN', u.email, 'Signed in')
